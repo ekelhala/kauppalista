@@ -1,0 +1,7 @@
+cors:
+  allowOrigins:
+    - http://localhost:5173
+  allowCredentials: true
+server:
+  port: 9000
+  host: 127.0.0.1

@@ -11,12 +11,26 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/ekelhala/kauppalista/internal/api"
+	"github.com/ekelhala/kauppalista/internal/config"
 	"github.com/ekelhala/kauppalista/internal/repository"
 	"github.com/ekelhala/kauppalista/internal/service"
 )
 
 func main() {
 	err := godotenv.Load()
+
+	configPath := "config.yaml"
+	config := config.LoadConfig(configPath)
+	if config == nil {
+		log.Panic("Failed to load configuration!")
+	}
+
+	log.Println("Configuration loaded successfully.")
+	routerConfig := &api.RouterConfig{
+		CorsAllowedOrigins:   config.Cors.AllowOrigins,
+		CorsAllowCredentials: config.Cors.AllowCredentials,
+	}
+
 	if err != nil {
 		log.Println("No .env file found, proceeding with environment variables")
 	}
@@ -35,7 +49,7 @@ func main() {
 	itemRepo := repository.NewItemRepository(db)
 	listService := service.NewListService(listRepo)
 	itemService := service.NewItemService(itemRepo)
-	router := api.NewRouter(listService, itemService)
-	log.Println("Starting server on :8080")
-	http.ListenAndServe(":8080", router.Mux)
+	router := api.NewRouter(listService, itemService, routerConfig)
+	log.Printf("starting server on %s:%d", config.Server.Host, config.Server.Port)
+	http.ListenAndServe(fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port), router.Mux)
 }
