@@ -1,8 +1,10 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 
+	"github.com/ekelhala/kauppalista/internal/handlers"
 	"github.com/ekelhala/kauppalista/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -26,6 +28,10 @@ func NewRouter(listSvc *service.ListService, itemSvc *service.ItemService) *Rout
 
 	r.Use(middleware.Logger)
 	r.Mount("/api", apiRouter(listSvc, itemSvc))
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(handlers.ErrorResponse{Message: "endpoint not found"})
+	})
 
 	return &Router{Mux: r}
 }
