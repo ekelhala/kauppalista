@@ -1,7 +1,7 @@
 import { Container } from '@mantine/core';
 import { BrowserRouter, Routes, Route, useParams, useLocation } from 'react-router-dom';
 import { ListsView } from './views/ListsView';
-import { ListView } from './components/ListView';
+import { ListView } from './views/ListView';
 
 const App = () => {
   return (
