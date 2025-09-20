@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { Item } from '../types/Item';
-import { Card, Title, Text, Divider, TextInput, Button, List, Checkbox, Loader } from '@mantine/core';
+import { Card, Title, Divider, TextInput, Button, List, Loader } from '@mantine/core';
 import { addItem, getItems, checkItem, deleteItem } from '../services/shoppingListService';
+import ItemRow from '../components/ItemRow';
 import { useNavigate } from 'react-router-dom';
-import { IconArrowLeft, IconTrash } from '@tabler/icons-react';
+import { IconArrowLeft } from '@tabler/icons-react';
 
 type Props = {
   listId: string;
@@ -28,7 +29,14 @@ export const ListView = ({ listId, listName }: Props) => {
   }
 
   const handleCheck = async (itemId: string, checked: boolean) => {
-    await checkItem(itemId, checked);
+    // optimistic update
+    setItems(prev => prev.map(it => it.id === itemId ? { ...it, checked } : it));
+    try {
+      await checkItem(itemId, checked);
+    } catch (e) {
+      // revert on error
+      setItems(prev => prev.map(it => it.id === itemId ? { ...it, checked: !checked } : it));
+    }
   }
 
   useEffect(() => { fetch(); }, [listId]);
@@ -48,22 +56,14 @@ export const ListView = ({ listId, listName }: Props) => {
       ) : (
         <List spacing="xs" size="sm" center style={{ marginBottom: 8, width: '100%' }}>
           {items.map(i => (
-            <List.Item component="div" key={i.id} style={{ padding: 4, width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
-                  <Checkbox
-                    defaultChecked={i.checked}
-                    onChange={(e) => handleCheck(i.id, e.currentTarget.checked)} />
-                  <Text>{i.name}</Text>
-                </div>
-                <Button variant="subtle" size="xs" color="red" onClick={async () => {
-                  await deleteItem(i.id);
+              <ItemRow
+                item={i}
+                onCheck={handleCheck}
+                onDelete={async (id) => {
+                  await deleteItem(id);
                   await fetch();
-                }}>
-                  <IconTrash style={{ marginRight: 4 }} />
-                </Button>
-              </div>
-            </List.Item>
+                }}
+              />
           ))}
         </List>
       )}
