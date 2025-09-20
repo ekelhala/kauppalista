@@ -26,7 +26,7 @@ func (r *ListRepository) GetAll() ([]List, error) {
 
 func (r *ListRepository) GetByID(listID string) ([]Item, error) {
 	var list List
-	result := r.db.Preload("Items").First(&list, "id = ?", listID)
+	result := r.db.Preload("Items").First(&list, "id = ?", listID).Order("checked ASC")
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
