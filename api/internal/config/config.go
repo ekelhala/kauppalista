@@ -16,6 +16,10 @@ type Config struct {
 		Port int    `yaml:"port" validate:"required"`
 		Host string `yaml:"host" validate:"required"`
 	} `yaml:"server"`
+	Redis struct {
+		Host string `yaml:"host" validate:"required"`
+		Port int    `yaml:"port" validate:"required"`
+	} `yaml:"redis"`
 }
 
 func LoadConfig(configPath string) *Config {
