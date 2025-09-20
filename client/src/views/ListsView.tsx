@@ -5,7 +5,7 @@ import { deleteList, getLists } from "../services/shoppingListService";
 import { Container, Title, Card, Badge, Text, Loader, Button, Menu, ActionIcon } from '@mantine/core';
 import { AddListDialog } from "../components/AddListDialog";
 import { useNavigate } from 'react-router-dom';
-import { IconTrash, IconDots } from '@tabler/icons-react';
+import { IconTrash, IconDots, IconPlus } from '@tabler/icons-react';
 
 export const ListsView = () => {
   const navigate = useNavigate();
@@ -28,8 +28,11 @@ export const ListsView = () => {
   return (
     <Container size="sm" py="xl">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Title order={1}>Kauppalistat</Title>
-        <Button onClick={() => setDialogOpen(true)}>Uusi lista</Button>
+        <Title order={1}>Listat</Title>
+        <Button onClick={() => setDialogOpen(true)}>
+            <IconPlus style={{ marginRight: 8 }} />
+            Uusi
+        </Button>
       </div>
 
       <AddListDialog opened={dialogOpen} onClose={() => setDialogOpen(false)} onListCreated={getAndSetLists} />
@@ -57,8 +60,10 @@ export const ListsView = () => {
                       </Menu.Target>
                       <Menu.Dropdown>
                         <Menu.Item color="red" onClick={async (e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); await deleteList(list.id); await getAndSetLists(); }}>
-                          <IconTrash size={16} />
-                          <span style={{ marginLeft: 8 }}>Poista</span>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <IconTrash size={16} />
+                            <span style={{ marginLeft: 8 }}>Poista</span>
+                          </div>
                         </Menu.Item>
                       </Menu.Dropdown>
                     </Menu>

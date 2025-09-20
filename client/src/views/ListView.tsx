@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import type { Item } from '../types/Item';
-import { Card, Title, Text, Divider, TextInput, Button, List, Checkbox } from '@mantine/core';
-import { addItem, getItems, checkItem } from '../services/shoppingListService';
+import { Card, Title, Text, Divider, TextInput, Button, List, Checkbox, Loader } from '@mantine/core';
+import { addItem, getItems, checkItem, deleteItem } from '../services/shoppingListService';
+import { useNavigate } from 'react-router-dom';
+import { IconArrowLeft, IconTrash } from '@tabler/icons-react';
 
 type Props = {
   listId: string;
-  onClose?: () => void;
   listName: string;
 }
 
@@ -13,6 +14,8 @@ export const ListView = ({ listId, listName }: Props) => {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [newItemName, setNewItemName] = useState('');
+
+  const navigate = useNavigate();
 
   const fetch = async () => {
     setLoading(true);
@@ -32,21 +35,33 @@ export const ListView = ({ listId, listName }: Props) => {
 
   return (
     <Card>
-      <Title order={3}>{listName}</Title>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+        <Button variant="subtle" size="xs" onClick={() => { navigate('/') }}>
+          <IconArrowLeft style={{ marginRight: 4 }} />
+          Takaisin
+        </Button>
+        <Title order={3} style={{ margin: 0 }}>{listName}</Title>
+      </div>
       <Divider my="sm" />
       {loading ? (
-        <Text>Loading...</Text>
+        <Loader />
       ) : (
-        <List spacing="xs">
+        <List spacing="xs" size="sm" center style={{ marginBottom: 8, width: '100%' }}>
           {items.map(i => (
-            <List.Item component="div" key={i.id}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Checkbox 
+            <List.Item component="div" key={i.id} style={{ padding: 4, width: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+                  <Checkbox
                     defaultChecked={i.checked}
                     onChange={(e) => handleCheck(i.id, e.currentTarget.checked)} />
                   <Text>{i.name}</Text>
                 </div>
+                <Button variant="subtle" size="xs" color="red" onClick={async () => {
+                  await deleteItem(i.id);
+                  await fetch();
+                }}>
+                  <IconTrash style={{ marginRight: 4 }} />
+                </Button>
               </div>
             </List.Item>
           ))}
