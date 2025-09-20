@@ -1,0 +1,12 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kauppalista-api-ingressroute
+  namespace: kauppalista
+spec:
+  routes:
+    - match: Host(`kauppalista-api.apps.k3s.kelhala.com`)
+      kind: Rule
+      services:
+        - name: kauppalista-api-svc
+          port: 8080

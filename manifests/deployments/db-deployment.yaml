@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kauppalistadb-deployment
+  labels:
+    app: kauppalistadb
+  namespace: kauppalista
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kauppalistadb
+  template:
+    metadata:
+      labels:
+        app: kauppalistadb
+    spec:
+      containers:
+        - name: kauppalistadb
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-data
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            - name: POSTGRES_DB
+              value: "kauppalista"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "750m"
+      imagePullSecrets:
+        - name: registry-credentials
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc

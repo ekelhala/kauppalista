@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kauppalista-api
+  labels:
+    app: kauppalista-api
+  namespace: kauppalista
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kauppalista-api
+  template:
+    metadata:
+      labels:
+        app: kauppalista-api
+    spec:
+      containers:
+        - name: kauppalista-api
+          image: registry.kelhala.com/kauppalista-api:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PSQL_HOST
+              value: "kauppalistadb-service.kauppalista.svc.cluster.local"
+            - name: PSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: PSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            - name: PSQL_DB
+              value: "kauppalista"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "750m"
+      imagePullSecrets:
+        - name: registry-cred
