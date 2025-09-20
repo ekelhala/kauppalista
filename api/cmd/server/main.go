@@ -21,7 +21,6 @@ var configFlag = flag.String("config", "config.yaml", "Path to configuration fil
 
 func main() {
 	flag.Parse()
-	err := godotenv.Load()
 
 	configPath := *configFlag
 	config := config.LoadConfig(configPath)
@@ -35,6 +34,7 @@ func main() {
 		CorsAllowCredentials: config.Cors.AllowCredentials,
 	}
 
+	err := godotenv.Load()
 	if err != nil {
 		log.Println("No .env file found, proceeding with environment variables")
 	}
