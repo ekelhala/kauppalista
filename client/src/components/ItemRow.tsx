@@ -46,7 +46,7 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
               <Menu.Dropdown>
                 <Menu.Item onClick={inc}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><IconPlus size={16} />Lisää</span></Menu.Item>
                 <Menu.Item onClick={dec}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><IconMinus size={16} />Vähennä</span></Menu.Item>
-                <Menu.Item onClick={() => onDelete(item.id)}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--mantine-color-red-6, red)' }}><IconTrash size={16} />Delete</span></Menu.Item>
+                <Menu.Item onClick={() => onDelete(item.id)}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--mantine-color-red-6, red)' }}><IconTrash size={16} />Poista</span></Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </div>
