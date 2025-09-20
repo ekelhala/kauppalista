@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,10 +17,13 @@ import (
 	"github.com/ekelhala/kauppalista/internal/service"
 )
 
+var configFlag = flag.String("config", "config.yaml", "Path to configuration file")
+
 func main() {
+	flag.Parse()
 	err := godotenv.Load()
 
-	configPath := "config.yaml"
+	configPath := *configFlag
 	config := config.LoadConfig(configPath)
 	if config == nil {
 		log.Panic("Failed to load configuration!")
