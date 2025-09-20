@@ -1,30 +1,27 @@
-import { useEffect, useState } from "react";
-
-import type { List } from "./types/List";
-import { getLists } from "./services/shoppingListService";
+import { Container } from '@mantine/core';
+import { BrowserRouter, Routes, Route, useParams, useLocation } from 'react-router-dom';
+import { ListsView } from './views/ListsView';
+import { ListView } from './components/ListView';
 
 const App = () => {
-
-  const [lists, setLists] = useState<List[]>([]);
-
-  useEffect(() => {
-    const effect = async () => {
-      const listData = await getLists();
-      setLists(listData);
-    }
-    effect();
-  }, []);
-
   return (
-    <>
-      <h1>Kauppalistat</h1>
-      <ul>
-        {lists.map(list => (
-          <li key={list.id}>{list.name} ({list.items.length} tuotetta)</li>
-        ))}
-      </ul>
-    </>
+    <BrowserRouter>
+      <Container size="sm" py="xl">
+        <Routes>
+          <Route path="/" element={<ListsView />} />
+          <Route path="/lists/:id" element={<ListViewWrapper />} />
+        </Routes>
+      </Container>
+    </BrowserRouter>
   )
+}
+
+function ListViewWrapper() {
+  const { id } = useParams();
+  const location = useLocation();
+  const name = (location.state as any)?.name as string | undefined;
+  if (!id) return null;
+  return <ListView listId={id} listName={name ?? id} />;
 }
 
 export default App
