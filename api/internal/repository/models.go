@@ -1,10 +1,11 @@
 package repository
 
 type Item struct {
-	ID      string `json:"id" gorm:"primaryKey"`
-	ListID  string `json:"-" gorm:"index"`
-	Name    string `json:"name"`
-	Checked bool   `json:"checked"`
+	ID       string `json:"id" gorm:"primaryKey"`
+	ListID   string `json:"-" gorm:"index"`
+	Name     string `json:"name"`
+	Checked  bool   `json:"checked"`
+	Quantity int    `json:"quantity"`
 }
 
 type List struct {

@@ -29,3 +29,10 @@ func (r *ItemRepository) DeleteItem(itemID string) error {
 func (r *ItemRepository) UpdateItemName(itemID, newName string) error {
 	return r.db.Model(&Item{}).Where("id = ?", itemID).Update("name", newName).Error
 }
+
+func (r *ItemRepository) IncreaseItemQuantity(itemID string) error {
+	return r.db.Model(&Item{}).Where("id = ?", itemID).Update("quantity", gorm.Expr("quantity + ?", 1)).Error
+}
+func (r *ItemRepository) DecreaseItemQuantity(itemID string) error {
+	return r.db.Model(&Item{}).Where("id = ? AND quantity > 1", itemID).Update("quantity", gorm.Expr("quantity - ?", 1)).Error
+}

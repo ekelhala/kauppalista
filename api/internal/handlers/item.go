@@ -80,3 +80,37 @@ func (h *ItemHandler) HandleUpdateItemName(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte{})
 }
+
+func (h *ItemHandler) HandleIncreaseItemQuantity(w http.ResponseWriter, r *http.Request) {
+	itemID := chi.URLParam(r, "itemID")
+	if itemID == "" {
+		http.Error(w, "itemID is required", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.svc.IncreaseItemQuantity(itemID); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to increase item quantity"})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte{})
+}
+
+func (h *ItemHandler) HandleDecreaseItemQuantity(w http.ResponseWriter, r *http.Request) {
+	itemID := chi.URLParam(r, "itemID")
+	if itemID == "" {
+		http.Error(w, "itemID is required", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.svc.DecreaseItemQuantity(itemID); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to decrease item quantity"})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte{})
+}

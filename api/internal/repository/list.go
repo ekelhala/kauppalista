@@ -43,7 +43,11 @@ func (r *ListRepository) CreateList(name string) (string, error) {
 }
 
 func (r *ListRepository) AddItem(listID, itemName string) (string, error) {
-	item := Item{Name: itemName, Checked: false, ListID: listID, ID: uuid.New().String()}
+	item := Item{Name: itemName,
+		Checked:  false,
+		ListID:   listID,
+		ID:       uuid.New().String(),
+		Quantity: 1}
 	result := r.db.Create(&item)
 	return item.ID, result.Error
 }

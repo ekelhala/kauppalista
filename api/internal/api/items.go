@@ -15,6 +15,8 @@ func itemsRouter(svc *service.ItemService) http.Handler {
 	r.Post("/{itemID}/toggle", handler.HandleToggleItem)
 	r.Delete("/{itemID}", handler.HandleDeleteItem)
 	r.Put("/{itemID}", handler.HandleUpdateItemName)
+	r.Post("/{itemID}/increase", handler.HandleIncreaseItemQuantity)
+	r.Post("/{itemID}/decrease", handler.HandleDecreaseItemQuantity)
 
 	return r
 }
