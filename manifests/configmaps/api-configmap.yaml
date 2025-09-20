@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+  namespace: kauppalista
+data:
+  config.yaml: |
+    cors:
+      allowOrigins:
+        - "https://kauppalista.apps.k3s.kelhala.com"
+      allowCredentials: true
+    server:
+      port: 8080
+      host: 0.0.0.0

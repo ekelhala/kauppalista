@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kauppalista-client-svc
+  labels:
+    app: kauppalista-client
+  namespace: kauppalista
+spec:
+  selector:
+    app: kauppalista-client
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
