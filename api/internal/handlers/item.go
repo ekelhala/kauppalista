@@ -19,12 +19,14 @@ func NewItemHandler(svc *service.ItemService) *ItemHandler {
 func (h *ItemHandler) HandleToggleItem(w http.ResponseWriter, r *http.Request) {
 	itemID := chi.URLParam(r, "itemID")
 	if itemID == "" {
-		http.Error(w, "itemID is required", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "itemID is required"})
 		return
 	}
 
 	if err := h.svc.ToggleItem(itemID); err != nil {
-		http.Error(w, "Failed to toggle item", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to toggle item"})
 		return
 	}
 
@@ -35,12 +37,14 @@ func (h *ItemHandler) HandleToggleItem(w http.ResponseWriter, r *http.Request) {
 func (h *ItemHandler) HandleDeleteItem(w http.ResponseWriter, r *http.Request) {
 	itemID := chi.URLParam(r, "itemID")
 	if itemID == "" {
-		http.Error(w, "itemID is required", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "itemID is required"})
 		return
 	}
 
 	if err := h.svc.DeleteItem(itemID); err != nil {
-		http.Error(w, "Failed to delete item", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to delete item"})
 		return
 	}
 
@@ -55,20 +59,21 @@ func (h *ItemHandler) HandleUpdateItemName(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	var req struct {
-		Name string `json:"name"`
-	}
+	var req UpdateItemNameRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid request payload"})
 		return
 	}
 	if req.Name == "" {
-		http.Error(w, "Item name is required", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Item name is required"})
 		return
 	}
 
 	if err := h.svc.UpdateItemName(itemID, req.Name); err != nil {
-		http.Error(w, "Failed to update item name", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to update item name"})
 		return
 	}
 
