@@ -2,7 +2,7 @@ package repository
 
 type Item struct {
 	ID      string `json:"id" gorm:"primaryKey"`
-	ListID  string `json:"list_id" gorm:"index"`
+	ListID  string `json:"-" gorm:"index"`
 	Name    string `json:"name"`
 	Checked bool   `json:"checked"`
 }
@@ -10,5 +10,5 @@ type Item struct {
 type List struct {
 	ID    string `json:"id" gorm:"primaryKey"`
 	Name  string `json:"name"`
-	Items []Item `json:"items" gorm:"foreignKey:ListID;constraint:OnDelete:CASCADE"`
+	Items []Item `json:"-" gorm:"foreignKey:ListID;constraint:OnDelete:CASCADE"`
 }

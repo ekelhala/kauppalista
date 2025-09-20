@@ -32,8 +32,10 @@ func main() {
 	}
 	// Entry point for the server application
 	listRepo := repository.NewListRepository(db)
+	itemRepo := repository.NewItemRepository(db)
 	listService := service.NewListService(listRepo)
-	router := api.NewRouter(listService)
+	itemService := service.NewItemService(itemRepo)
+	router := api.NewRouter(listService, itemService)
 	log.Println("Starting server on :8080")
 	http.ListenAndServe(":8080", router.Mux)
 }
