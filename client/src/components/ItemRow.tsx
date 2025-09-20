@@ -23,7 +23,8 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
 }
 
   return (
-    <Card radius="sm" shadow="sm" withBorder style={{ width: '100%', padding: 8, marginBottom: 4 }}>
+    <Card radius="sm" shadow="sm" withBorder 
+      style={{ width: '100%', padding: 8, marginBottom: 4, backgroundColor: item.checked ? 'var(--mantine-color-gray-0, #f8f9fa)' : 'white', opacity: item.checked ? 0.6 : 1 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
           <Checkbox

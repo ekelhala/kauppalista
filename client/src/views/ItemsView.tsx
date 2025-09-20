@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { Item } from '../types/Item';
-import { Card, Title, Divider, TextInput, Button, List, Loader } from '@mantine/core';
+import { Title, Divider, Button, List, Loader } from '@mantine/core';
 import { addItem, getItems, checkItem, deleteItem } from '../services/shoppingListService';
 import ItemRow from '../components/ItemRow';
 import { useNavigate } from 'react-router-dom';
-import { IconArrowLeft } from '@tabler/icons-react';
+import { IconArrowLeft, IconPlus } from '@tabler/icons-react';
+import { AddItemDialog } from '../components/AddItemDialog';
 
 type Props = {
   listId: string;
@@ -14,7 +15,7 @@ type Props = {
 export const ListView = ({ listId, listName }: Props) => {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newItemName, setNewItemName] = useState('');
+  const [dialogOpened, setDialogOpened] = useState(false);
 
   const navigate = useNavigate();
 
@@ -39,21 +40,34 @@ export const ListView = ({ listId, listName }: Props) => {
     }
   }
 
+  const handleAddItem = async (name: string) => {
+    if (!name.trim()) return;
+    try {
+      await addItem(listId, name.trim());
+      await fetch();
+    } catch (e) {
+      console.error("Error adding item:", e);
+    }
+  }
+
   useEffect(() => { fetch(); }, [listId]);
 
   return (
-    <Card>
+    <>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <Button variant="subtle" size="xs" onClick={() => { navigate('/') }}>
-          <IconArrowLeft style={{ marginRight: 4 }} />
+          <IconArrowLeft size={16} style={{ marginRight: 4 }} />
           Takaisin
         </Button>
-        <Title order={3} style={{ margin: 0 }}>{listName}</Title>
+        <div>
+          <Title order={3} style={{ margin: 0 }}>{listName}</Title>
+        </div>
       </div>
       <Divider my="sm" />
       {loading ? (
         <Loader />
       ) : (
+        <>
         <List spacing="xs" size="sm" center style={{ marginBottom: 8, width: '100%' }}>
           {items.map(i => (
               <ItemRow
@@ -66,20 +80,22 @@ export const ListView = ({ listId, listName }: Props) => {
               />
           ))}
         </List>
+        <div style={{ position: 'sticky', bottom: 0, width: '100%', background: 'white', paddingTop: 8, paddingBottom: 8 }}>
+          <Button 
+            variant='light' 
+            size='xs' 
+            fullWidth
+            onClick={() => setDialogOpened(true)}>
+            Lisää tuote <IconPlus size={16} style={{ marginRight: 4 }} />
+          </Button>
+        </div>
+        </>
       )}
-
-      <Divider my="sm" />
-      <div style={{ display: 'flex', gap: 8 }}>
-        <TextInput placeholder="Uusi tuote" value={newItemName} onChange={(e) => setNewItemName(e.currentTarget.value)} />
-        <Button
-          onClick={async () => {
-            if (!newItemName.trim()) return;
-            await addItem(listId, newItemName.trim());
-            setNewItemName('');
-            await fetch();
-          }}
-        >Lisää</Button>
-      </div>
-    </Card>
+      <AddItemDialog
+        opened={dialogOpened}
+        onClose={() => setDialogOpened(false)}
+        onItemAdded={handleAddItem}
+      />
+    </>
   )
 }
