@@ -16,3 +16,8 @@ func (s *ListService) GetAllLists() ([]repository.List, error) {
 	// Business logic to retrieve all lists
 	return s.listRepo.GetAll()
 }
+
+func (s *ListService) CreateList(name string) (string, error) {
+	// Business logic to create a new list
+	return s.listRepo.CreateList(name)
+}

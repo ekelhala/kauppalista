@@ -12,6 +12,7 @@ func listsRouter(svc *service.ListService) http.Handler {
 	handler := NewHandler(svc)
 
 	r.Get("/", handler.HandleGetLists)
+	r.Post("/", handler.HandleCreateList)
 
 	return r
 }

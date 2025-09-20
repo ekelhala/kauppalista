@@ -1,8 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	"github.com/ekelhala/kauppalista/internal/api"
 	"github.com/ekelhala/kauppalista/internal/repository"
@@ -10,8 +16,22 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found, proceeding with environment variables")
+	}
+	dbConn := fmt.Sprintf("host=%s user=%s dbname=%s password=%s",
+		os.Getenv("PSQL_HOST"),
+		os.Getenv("PSQL_USER"),
+		os.Getenv("PSQL_DB"),
+		os.Getenv("PSQL_PASSWORD"),
+	)
+	db, err := gorm.Open(postgres.Open(dbConn), &gorm.Config{})
+	if err != nil {
+		log.Fatal("failed to connect database")
+	}
 	// Entry point for the server application
-	listRepo := repository.NewInMemoryListRepository()
+	listRepo := repository.NewListRepository(db)
 	listService := service.NewListService(listRepo)
 	router := api.NewRouter(listService)
 	log.Println("Starting server on :8080")
