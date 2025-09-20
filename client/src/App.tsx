@@ -20,7 +20,7 @@ const App = () => {
       <h1>Kauppalistat</h1>
       <ul>
         {lists.map(list => (
-          <li key={list.id}>{list.name}</li>
+          <li key={list.id}>{list.name} ({list.items.length} tuotetta)</li>
         ))}
       </ul>
     </>
