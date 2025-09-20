@@ -32,7 +32,7 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
             checked={item.checked}
             onChange={(e) => onCheck(item.id, e.currentTarget.checked)}
           />
-          <Text style={{ wordBreak: 'break-word' }}>{item.name}</Text>
+          <Text style={{ wordBreak: 'break-word', textDecoration: item.checked ? 'line-through' : 'none' }}>{item.name}</Text>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
