@@ -16,6 +16,7 @@ export const ListView = ({ listId, listName }: Props) => {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpened, setDialogOpened] = useState(false);
+  const [listExists, setListExists] = useState(true);
 
   const navigate = useNavigate();
 
@@ -24,7 +25,11 @@ export const ListView = ({ listId, listName }: Props) => {
     try {
       const res = await getItems(listId);
       setItems(res.items);
-    } finally {
+    }
+    catch (e) {
+      setListExists(false);
+    }
+    finally {
       setLoading(false);
     }
   }
@@ -52,6 +57,14 @@ export const ListView = ({ listId, listName }: Props) => {
 
   useEffect(() => { fetch(); }, [listId]);
 
+  if (!listExists) {
+    return (
+      <div>
+        <Title order={3}>404: listaa ei löydy</Title>
+      </div>
+    );
+  }
+
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -71,6 +84,7 @@ export const ListView = ({ listId, listName }: Props) => {
         <List spacing="xs" size="sm" center style={{ marginBottom: 8, width: '100%' }}>
           {items.map(i => (
               <ItemRow
+                key={i.id}
                 item={i}
                 onCheck={handleCheck}
                 onDelete={async (id) => {

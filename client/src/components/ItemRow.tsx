@@ -12,6 +12,7 @@ type Props = {
 
 export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
   const [quantity, setQuantity] = useState<number>(item.quantity);
+  const [menuOpened, setMenuOpened] = useState(false);
 
   const dec = () => {
     setQuantity(q => Math.max(1, q - 1));
@@ -37,7 +38,10 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Text>{quantity}</Text>
-            <Menu withArrow position="left">
+            <Menu 
+              withArrow position="bottom"
+              closeOnItemClick={false} opened={menuOpened} onChange={setMenuOpened}
+            >
               <Menu.Target>
                 <ActionIcon size="sm" variant="light" aria-label={`more-${item.id}`}>
                   <IconDotsVertical size={18} />
@@ -47,7 +51,12 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
               <Menu.Dropdown>
                 <Menu.Item onClick={inc}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><IconPlus size={16} />Lisää</span></Menu.Item>
                 <Menu.Item onClick={dec}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><IconMinus size={16} />Vähennä</span></Menu.Item>
-                <Menu.Item onClick={() => onDelete(item.id)}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--mantine-color-red-6, red)' }}><IconTrash size={16} />Poista</span></Menu.Item>
+                <Menu.Item onClick={() => {setMenuOpened(false); onDelete(item.id)}}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--mantine-color-red-6, red)' }}>
+                    <IconTrash size={16} />
+                    Poista
+                  </span>
+                </Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </div>
