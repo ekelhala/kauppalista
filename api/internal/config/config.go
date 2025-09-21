@@ -23,6 +23,7 @@ type Config struct {
 	Keycloak struct {
 		Issuer   string `yaml:"issuer"`
 		ClientID string `yaml:"client_id"`
+		Realm    string `yaml:"realm"`
 	} `yaml:"keycloak"`
 }
 

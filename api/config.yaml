@@ -10,4 +10,5 @@ redis:
   port: 6379
 keycloak:
   issuer: "https://keycloak.kelhala.com/realms/kauppalista"
-  client_id: "account"
+  client_id: "kauppalista-api"
+  realm: "kauppalista"

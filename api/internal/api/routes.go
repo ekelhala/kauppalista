@@ -21,16 +21,17 @@ type RouterConfig struct {
 	CorsAllowCredentials bool
 }
 
-func apiRouter(listSvc *service.ListService, itemSvc *service.ItemService) http.Handler {
+func apiRouter(listSvc *service.ListService, itemSvc *service.ItemService, kcSvc *service.KeycloakService) http.Handler {
 	r := chi.NewRouter()
 
 	r.Mount("/lists", listsRouter(listSvc))
 	r.Mount("/items", itemsRouter(itemSvc))
+	r.Mount("/users", usersRouter(kcSvc))
 
 	return r
 }
 
-func NewRouter(listSvc *service.ListService, itemSvc *service.ItemService, config *RouterConfig, authMiddleware func(http.Handler) http.Handler) *Router {
+func NewRouter(listSvc *service.ListService, itemSvc *service.ItemService, kcSvc *service.KeycloakService, config *RouterConfig, authMiddleware func(http.Handler) http.Handler) *Router {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Logger)
@@ -41,7 +42,7 @@ func NewRouter(listSvc *service.ListService, itemSvc *service.ItemService, confi
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 	}).Handler)
 	log.Printf("set CORS allowed origins: %v", config.CorsAllowedOrigins)
-	apiR := apiRouter(listSvc, itemSvc)
+	apiR := apiRouter(listSvc, itemSvc, kcSvc)
 	apiR = authMiddleware(apiR)
 	r.Mount("/api", apiR)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
