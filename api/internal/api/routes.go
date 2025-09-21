@@ -38,6 +38,7 @@ func NewRouter(listSvc *service.ListService, itemSvc *service.ItemService, confi
 		AllowedOrigins:   config.CorsAllowedOrigins,
 		AllowCredentials: config.CorsAllowCredentials,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 	}).Handler)
 	log.Printf("set CORS allowed origins: %v", config.CorsAllowedOrigins)
 	apiR := apiRouter(listSvc, itemSvc)
