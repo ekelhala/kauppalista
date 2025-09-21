@@ -55,3 +55,45 @@ func (r *ListRepository) AddItem(listID, itemName string) (string, error) {
 func (r *ListRepository) DeleteList(listID string) error {
 	return r.db.Delete(&List{}, "id = ?", listID).Error
 }
+
+func (r *ListRepository) ShareList(listID, userID string) error {
+	accessMapping := AccessMapping{
+		ID:     uuid.New().String(),
+		ListID: listID,
+		UserID: userID,
+	}
+	return r.db.Create(&accessMapping).Error
+}
+
+func (r *ListRepository) GetSharedWithMe(userID string) ([]List, error) {
+	var lists []List
+	result := r.db.Joins("JOIN access_mappings ON access_mappings.list_id = lists.id").
+		Where("access_mappings.user_id = ?", userID).
+		Preload("Items").
+		Find(&lists)
+	return lists, result.Error
+}
+
+func (r *ListRepository) IsListOwner(listID, userID string) (bool, error) {
+	var list List
+	result := r.db.First(&list, "id = ? AND owner = ?", listID, userID)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, result.Error
+	}
+	return true, nil
+}
+
+func (r *ListRepository) HasAccess(listID, userID string) (bool, error) {
+	var accessMapping AccessMapping
+	result := r.db.First(&accessMapping, "list_id = ? AND user_id = ?", listID, userID)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, result.Error
+	}
+	return true, nil
+}

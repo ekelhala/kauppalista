@@ -21,3 +21,7 @@ type ErrorResponse struct {
 type GetListItemsResponse struct {
 	Items []repository.Item `json:"items"`
 }
+
+type ShareListRequest struct {
+	ToUser string `json:"to_user"`
+}

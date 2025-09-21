@@ -37,7 +37,8 @@ func (h *ListHandler) HandleGetListItems(w http.ResponseWriter, r *http.Request)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "List ID is required"})
 		return
 	}
-	list, err := h.svc.GetListItems(listID)
+	authenticatedUserID := auth.UserIDFromContext(r.Context())
+	list, err := h.svc.GetListItems(listID, authenticatedUserID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to retrieve list"})
@@ -90,7 +91,8 @@ func (h *ListHandler) HandleAddItem(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "List ID and item name are required"})
 		return
 	}
-	id, err := h.svc.AddItem(listID, req.Name)
+	authenticatedUserID := auth.UserIDFromContext(r.Context())
+	id, err := h.svc.AddItem(listID, req.Name, authenticatedUserID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to add item"})
@@ -107,11 +109,47 @@ func (h *ListHandler) HandleDeleteList(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "List ID is required"})
 		return
 	}
-	if err := h.svc.DeleteList(listID); err != nil {
+	authenticatedUserID := auth.UserIDFromContext(r.Context())
+	if err := h.svc.DeleteList(listID, authenticatedUserID); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to delete list"})
 		return
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte{})
+}
+
+func (h *ListHandler) HandleShareList(w http.ResponseWriter, r *http.Request) {
+	var req ShareListRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid request payload"})
+		return
+	}
+	var listID = chi.URLParam(r, "listID")
+	if listID == "" || req.ToUser == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "List ID and user ID are required"})
+		return
+	}
+	authenticatedUserID := auth.UserIDFromContext(r.Context())
+	if err := h.svc.ShareList(listID, req.ToUser, authenticatedUserID); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to share list"})
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte{})
+}
+
+func (h *ListHandler) HandleGetSharedWithMe(w http.ResponseWriter, r *http.Request) {
+	ownerID := auth.UserIDFromContext(r.Context())
+	lists, err := h.svc.GetSharedWithMe(ownerID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to retrieve lists"})
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(lists)
 }
