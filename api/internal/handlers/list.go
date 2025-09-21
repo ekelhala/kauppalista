@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/ekelhala/kauppalista/internal/auth"
 	"github.com/ekelhala/kauppalista/internal/service"
 )
 
@@ -18,7 +19,8 @@ func NewListHandler(svc *service.ListService) *ListHandler {
 }
 
 func (h *ListHandler) HandleGetLists(w http.ResponseWriter, r *http.Request) {
-	lists, err := h.svc.GetAllLists()
+	ownerID := auth.UserIDFromContext(r.Context())
+	lists, err := h.svc.GetAllLists(ownerID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to retrieve lists"})
@@ -62,7 +64,10 @@ func (h *ListHandler) HandleCreateList(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "List name is required"})
 		return
 	}
-	id, err := h.svc.CreateList(req.Name)
+	// try to get authenticated user id from context (middleware may set it)
+	ownerID := auth.UserIDFromContext(r.Context())
+
+	id, err := h.svc.CreateList(req.Name, ownerID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to create list"})

@@ -12,6 +12,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/ekelhala/kauppalista/internal/api"
+	"github.com/ekelhala/kauppalista/internal/api/middleware"
 	"github.com/ekelhala/kauppalista/internal/config"
 	"github.com/ekelhala/kauppalista/internal/repository"
 	"github.com/ekelhala/kauppalista/internal/service"
@@ -53,7 +54,11 @@ func main() {
 	itemRepo := repository.NewItemRepository(db)
 	listService := service.NewListService(listRepo)
 	itemService := service.NewItemService(itemRepo)
-	router := api.NewRouter(listService, itemService, routerConfig)
+	var authMiddleware func(http.Handler) http.Handler
+	if config.Keycloak.Issuer != "" && config.Keycloak.ClientID != "" {
+		authMiddleware = middleware.NewKeycloakMiddleware(config.Keycloak.Issuer, config.Keycloak.ClientID)
+	}
+	router := api.NewRouter(listService, itemService, routerConfig, authMiddleware)
 	log.Printf("starting server on %s:%d", config.Server.Host, config.Server.Port)
 	http.ListenAndServe(fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port), router.Mux)
 }

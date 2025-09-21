@@ -11,5 +11,6 @@ type Item struct {
 type List struct {
 	ID    string `json:"id" gorm:"primaryKey"`
 	Name  string `json:"name"`
+	Owner string `json:"-" gorm:"index"`
 	Items []Item `json:"-" gorm:"foreignKey:ListID;constraint:OnDelete:CASCADE"`
 }

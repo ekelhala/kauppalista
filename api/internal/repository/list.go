@@ -18,15 +18,15 @@ func NewInMemoryListRepository() *ListRepository {
 	return &ListRepository{db: nil}
 }
 
-func (r *ListRepository) GetAll() ([]List, error) {
+func (r *ListRepository) GetAll(ownerID string) ([]List, error) {
 	var lists []List
-	result := r.db.Preload("Items").Find(&lists)
+	result := r.db.Preload("Items").Where("owner = ?", ownerID).Find(&lists)
 	return lists, result.Error
 }
 
 func (r *ListRepository) GetByID(listID string) ([]Item, error) {
 	var list List
-	result := r.db.Preload("Items").First(&list, "id = ?", listID).Order("checked ASC")
+	result := r.db.Preload("Items").First(&list, "id = ?", listID)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
@@ -36,8 +36,8 @@ func (r *ListRepository) GetByID(listID string) ([]Item, error) {
 	return list.Items, nil
 }
 
-func (r *ListRepository) CreateList(name string) (string, error) {
-	list := List{Name: name, Items: []Item{}, ID: uuid.New().String()}
+func (r *ListRepository) CreateList(name, ownerID string) (string, error) {
+	list := List{Name: name, Items: []Item{}, ID: uuid.New().String(), Owner: ownerID}
 	result := r.db.Create(&list)
 	return list.ID, result.Error
 }

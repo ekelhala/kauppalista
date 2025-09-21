@@ -8,3 +8,6 @@ server:
 redis:
   host: localhost
   port: 6379
+keycloak:
+  issuer: ""
+  client_id: "account"

@@ -30,7 +30,7 @@ func apiRouter(listSvc *service.ListService, itemSvc *service.ItemService) http.
 	return r
 }
 
-func NewRouter(listSvc *service.ListService, itemSvc *service.ItemService, config *RouterConfig) *Router {
+func NewRouter(listSvc *service.ListService, itemSvc *service.ItemService, config *RouterConfig, authMiddleware func(http.Handler) http.Handler) *Router {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Logger)
@@ -40,7 +40,9 @@ func NewRouter(listSvc *service.ListService, itemSvc *service.ItemService, confi
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 	}).Handler)
 	log.Printf("set CORS allowed origins: %v", config.CorsAllowedOrigins)
-	r.Mount("/api", apiRouter(listSvc, itemSvc))
+	apiR := apiRouter(listSvc, itemSvc)
+	apiR = authMiddleware(apiR)
+	r.Mount("/api", apiR)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(handlers.ErrorResponse{Message: "endpoint not found"})

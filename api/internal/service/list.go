@@ -12,9 +12,9 @@ func NewListService(repo *repository.ListRepository) *ListService {
 	return &ListService{listRepo: *repo}
 }
 
-func (s *ListService) GetAllLists() ([]repository.List, error) {
+func (s *ListService) GetAllLists(ownerID string) ([]repository.List, error) {
 	// Business logic to retrieve all lists
-	return s.listRepo.GetAll()
+	return s.listRepo.GetAll(ownerID)
 }
 
 func (s *ListService) GetListItems(listID string) ([]repository.Item, error) {
@@ -22,9 +22,9 @@ func (s *ListService) GetListItems(listID string) ([]repository.Item, error) {
 	return s.listRepo.GetByID(listID)
 }
 
-func (s *ListService) CreateList(name string) (string, error) {
-	// Business logic to create a new list
-	return s.listRepo.CreateList(name)
+func (s *ListService) CreateList(name, ownerID string) (string, error) {
+	// Business logic to create a new list with owner
+	return s.listRepo.CreateList(name, ownerID)
 }
 
 func (s *ListService) AddItem(listID, itemName string) (string, error) {

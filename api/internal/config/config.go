@@ -20,6 +20,10 @@ type Config struct {
 		Host string `yaml:"host" validate:"required"`
 		Port int    `yaml:"port" validate:"required"`
 	} `yaml:"redis"`
+	Keycloak struct {
+		Issuer   string `yaml:"issuer"`
+		ClientID string `yaml:"client_id"`
+	} `yaml:"keycloak"`
 }
 
 func LoadConfig(configPath string) *Config {
