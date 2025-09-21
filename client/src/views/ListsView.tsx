@@ -6,12 +6,14 @@ import { Container, Title, Card, Badge, Text, Loader, Button, Menu, ActionIcon }
 import { AddListDialog } from "../components/AddListDialog";
 import { useNavigate } from 'react-router-dom';
 import { IconTrash, IconDots, IconPlus } from '@tabler/icons-react';
+import { useAuth } from "react-oidc-context";
 
 export const ListsView = () => {
   const navigate = useNavigate();
   const [lists, setLists] = useState<List[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const auth = useAuth();
 
   const getAndSetLists = async () => {
     setLoading(true);
@@ -23,7 +25,11 @@ export const ListsView = () => {
     }
   }
 
-  useEffect(() => { getAndSetLists(); }, []);
+  useEffect(() => {
+    if (!auth.isLoading && auth.isAuthenticated) {
+      getAndSetLists();
+    }
+  }, [auth.isAuthenticated, auth.isLoading]);
 
   return (
     <Container size="sm" py="xl">
