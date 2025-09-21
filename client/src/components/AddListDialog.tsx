@@ -12,6 +12,18 @@ export const AddListDialog = ({opened, onClose, onListCreated}: AddListDialogPro
 
     const [newListName, setNewListName] = useState('');
 
+    const handleCreate = async () => {
+        if (!newListName.trim()) return;
+        try {
+            await createList(newListName.trim());
+            setNewListName('');
+            onListCreated();
+            onClose();
+        } catch (error) {
+            console.error("Error creating list:", error);
+        }
+    }
+
     return (
         <Modal opened={opened} onClose={() => {setNewListName(''); onClose();}} title="Luo uusi lista">
             <TextInput
@@ -23,17 +35,8 @@ export const AddListDialog = ({opened, onClose, onListCreated}: AddListDialogPro
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
             <Button variant="default" onClick={() => {setNewListName(''); onClose();}}>Peruuta</Button>
             <Button
-            onClick={async () => {
-                if (!newListName.trim()) return;
-                try {
-                await createList(newListName.trim());
-                    setNewListName('');
-                    onListCreated();
-                    onClose();
-                } catch (error) {
-                    console.error("Error creating list:", error);
-                }
-            }}
+            onClick={handleCreate}
+            disabled={!newListName.trim()}
             >Tallenna</Button>
         </div>
         </Modal>
