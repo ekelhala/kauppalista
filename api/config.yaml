@@ -1,6 +1,6 @@
 cors:
   allowOrigins:
-    - http://localhost:5173
+    - "http://localhost:5173"
   allowCredentials: true
 server:
   port: 9000
@@ -9,5 +9,5 @@ redis:
   host: localhost
   port: 6379
 keycloak:
-  issuer: ""
+  issuer: "https://keycloak.kelhala.com/realms/kauppalista"
   client_id: "account"
