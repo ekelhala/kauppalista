@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { Item } from '../types/Item';
 import { Title, Divider, Button, List, Loader } from '@mantine/core';
 import { addItem, getItems, checkItem, deleteItem } from '../services/shoppingListService';
@@ -20,11 +20,17 @@ export const ListView = ({ listId, listName }: Props) => {
 
   const navigate = useNavigate();
 
+  const sortItems = (arr: Item[]) =>
+    [...arr].sort((a, b) => Number(a.checked) - Number(b.checked));
+
+  const reorderDelay = 300; // ms to wait before moving checked items
+  const timersRef = useRef<Record<string, number>>({});
+
   const fetch = async () => {
     setLoading(true);
     try {
       const res = await getItems(listId);
-      setItems(res.items);
+      setItems(sortItems(res.items));
     }
     catch (e) {
       setListExists(false);
@@ -35,12 +41,29 @@ export const ListView = ({ listId, listName }: Props) => {
   }
 
   const handleCheck = async (itemId: string, checked: boolean) => {
-    // optimistic update
+    // optimistic immediate checkbox update (preserve order so user sees the check)
     setItems(prev => prev.map(it => it.id === itemId ? { ...it, checked } : it));
+
+    // clear any existing timer for this item
+    if (timersRef.current[itemId]) {
+      clearTimeout(timersRef.current[itemId]);
+      delete timersRef.current[itemId];
+    }
+
+    // delay reordering so user can see the checkbox change before item moves
+    timersRef.current[itemId] = window.setTimeout(() => {
+      setItems(prev => sortItems([...prev]));
+      delete timersRef.current[itemId];
+    }, reorderDelay);
+
     try {
       await checkItem(itemId, checked);
     } catch (e) {
-      // revert on error
+      // clear pending reorder and revert optimistic change on error
+      if (timersRef.current[itemId]) {
+        clearTimeout(timersRef.current[itemId]);
+        delete timersRef.current[itemId];
+      }
       setItems(prev => prev.map(it => it.id === itemId ? { ...it, checked: !checked } : it));
     }
   }
@@ -55,7 +78,14 @@ export const ListView = ({ listId, listName }: Props) => {
     }
   }
 
-  useEffect(() => { fetch(); }, [listId]);
+  useEffect(() => {
+    fetch();
+    return () => {
+      // clear any pending timers on unmount to avoid state updates after unmount
+      Object.values(timersRef.current).forEach(id => clearTimeout(id));
+      timersRef.current = {};
+    };
+  }, [listId]);
 
   if (!listExists) {
     return (
