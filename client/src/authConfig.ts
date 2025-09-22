@@ -6,6 +6,7 @@ const userManager = new UserManager({
     redirect_uri: import.meta.env.DEV ? "http://localhost:5173" : "https://kauppalista.apps.k3s.kelhala.com",
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     response_type: "code",
+    post_logout_redirect_uri: import.meta.env.DEV ? "http://localhost:5173" : "https://kauppalista.apps.k3s.kelhala.com",
 });
 
 export default userManager;
