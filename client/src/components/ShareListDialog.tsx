@@ -1,7 +1,7 @@
 import { Modal, Button, TextInput, Box, Text } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { searchUsers } from "../services/userService";
-import { shareList } from "../services/shoppingListService";
+import { shareList } from "../services/listService";
 
 export type ShareListDialogProps = {
     opened: boolean;

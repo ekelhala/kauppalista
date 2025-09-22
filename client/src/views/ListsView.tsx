@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import type { MouseEvent } from 'react';
 import type { List } from "../types/List";
-import { deleteList, getLists, getSharedWithMeLists } from "../services/shoppingListService";
-import { Container, Title, Card, Badge, Text, Loader, Button, Menu, ActionIcon, Tabs } from '@mantine/core';
+import { deleteList, getLists, getSharedWithMeLists, getPinnedLists, pinList, unpinList } from "../services/listService";
+import { Container, Title, Text, Loader, Button, Tabs } from '@mantine/core';
 import { AddListDialog } from "../components/AddListDialog";
 import { ShareListDialog } from "../components/ShareListDialog";
+import ShoppingListItem from '../components/ShoppingListItem';
 import { useNavigate } from 'react-router-dom';
-import { IconTrash, IconDots, IconPlus, IconLogout } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
+import { AccountMenu } from '../components/AccountMenu';
 import { useAuth } from "react-oidc-context";
 
 export const ListsView = () => {
   const navigate = useNavigate();
   const [lists, setLists] = useState<List[]>([]);
+  const [pinnedLists, setPinnedLists] = useState<List[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -24,6 +26,8 @@ export const ListsView = () => {
     try {
       const listData = await getLists();
       setLists(listData);
+      const pinnedData = await getPinnedLists();
+      setPinnedLists(pinnedData);
       const sharedListsData = await getSharedWithMeLists();
       setSharedWithMeLists(sharedListsData);
     } finally {
@@ -41,22 +45,15 @@ export const ListsView = () => {
     <Container size="sm" py="xl">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <Title order={1}>Listat</Title>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <Button onClick={() => setDialogOpen(true)}>
             <IconPlus style={{ marginRight: 8 }} />
             Uusi
           </Button>
-          <Button variant="outline" onClick={async () => {
-            try {
-              await auth.signoutRedirect();
-            } catch (err) {
-              // fallback to removing local user if redirect fails
-              try { await auth.removeUser(); } catch (e) { console.error('Logout failed', e); }
-            }
-          }}>
-            <IconLogout style={{ marginRight: 8 }} />
-            Kirjaudu ulos
-          </Button>
+          <div>
+            {/* Account menu shows avatar and logout */}
+            <AccountMenu />
+          </div>
         </div>
       </div>
 
@@ -66,11 +63,36 @@ export const ListsView = () => {
       {loading ? (
         <Loader />
       ) : (
-        <Tabs defaultValue="my" keepMounted={false}>
+        <Tabs defaultValue="pinned" keepMounted={false}>
           <Tabs.List>
+            <Tabs.Tab value="pinned">Kiinnitetyt</Tabs.Tab>
             <Tabs.Tab value="my">Omat listat</Tabs.Tab>
             <Tabs.Tab value="shared">Jaettu kanssani</Tabs.Tab>
           </Tabs.List>
+
+          <Tabs.Panel value="pinned">
+            {pinnedLists.length === 0 ? (
+              <Text c="dimmed">Ei kiinnitettyjä listoja</Text>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {pinnedLists.map(list => (
+                  <ShoppingListItem
+                    key={list.id}
+                    list={list}
+                    onClick={(id: string) => navigate(`/lists/${id}`, { state: { name: list.name } })}
+                    onShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
+                    onDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
+                    isOwner={true}
+                    isPinned={true}
+                    onPinToggle={async (id: string, currentlyPinned: boolean) => {
+                      if (currentlyPinned) await unpinList(id); else await pinList(id);
+                      await getAndSetLists();
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </Tabs.Panel>
 
           <Tabs.Panel value="my">
             {lists.length === 0 ? (
@@ -78,36 +100,19 @@ export const ListsView = () => {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {lists.map(list => (
-                  <Card key={list.id} shadow="sm" radius="md" withBorder style={{ cursor: 'pointer' }} onClick={() => navigate(`/lists/${list.id}`, { state: { name: list.name } })}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <Text style={{ fontWeight: 700 }}>{list.name}</Text>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <Badge color="cyan" variant="light">{list.items.length} tuotetta</Badge>
-                        <Menu withinPortal>
-                          <Menu.Target>
-                            <ActionIcon aria-label="Avaa valikko" onClick={(e: MouseEvent) => e.stopPropagation()}>
-                              <IconDots size={18} />
-                            </ActionIcon>
-                          </Menu.Target>
-                            <Menu.Dropdown>
-                              <Menu.Item onClick={(e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); setShareListId(list.id); setShareDialogOpen(true); }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <span style={{ marginLeft: 8 }}>Jaa</span>
-                                </div>
-                              </Menu.Item>
-                              <Menu.Item color="red" onClick={async (e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); await deleteList(list.id); await getAndSetLists(); }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <IconTrash size={16} />
-                                  <span style={{ marginLeft: 8 }}>Poista</span>
-                                </div>
-                              </Menu.Item>
-                            </Menu.Dropdown>
-                        </Menu>
-                      </div>
-                    </div>
-                  </Card>
+                  <ShoppingListItem
+                    key={list.id}
+                    list={list}
+                    onClick={(id: string) => navigate(`/lists/${id}`, { state: { name: list.name } })}
+                    onShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
+                    onDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
+                    isOwner={true}
+                    isPinned={pinnedLists.some(p => p.id === list.id)}
+                    onPinToggle={async (id: string, currentlyPinned: boolean) => {
+                      if (currentlyPinned) await unpinList(id); else await pinList(id);
+                      await getAndSetLists();
+                    }}
+                  />
                 ))}
               </div>
             )}
@@ -119,17 +124,18 @@ export const ListsView = () => {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {sharedWithMeLists.map(list => (
-                  <Card key={list.id} shadow="sm" radius="md" withBorder style={{ cursor: 'pointer' }} onClick={() => navigate(`/lists/${list.id}`, { state: { name: list.name } })}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <Text style={{ fontWeight: 700 }}>{list.name}</Text>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <Badge color="cyan" variant="light">{list.items.length} tuotetta</Badge>
-                        {/* No delete action for shared lists */}
-                      </div>
-                    </div>
-                  </Card>
+                  <ShoppingListItem
+                    key={list.id}
+                    list={list}
+                    onClick={(id: string) => navigate(`/lists/${id}`, { state: { name: list.name } })}
+                    onShare={() => undefined}
+                    isOwner={false}
+                    isPinned={pinnedLists.some(p => p.id === list.id)}
+                    onPinToggle={async (id: string, currentlyPinned: boolean) => {
+                      if (currentlyPinned) await unpinList(id); else await pinList(id);
+                      await getAndSetLists();
+                    }}
+                  />
                 ))}
               </div>
             )}
@@ -139,5 +145,3 @@ export const ListsView = () => {
     </Container>
   )
 }
-
-      

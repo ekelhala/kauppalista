@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import type { Item } from '../types/Item';
 import { Title, Divider, Button, List, Loader } from '@mantine/core';
-import { addItem, getItems, checkItem, deleteItem } from '../services/shoppingListService';
+import { addItem, getItems, checkItem, deleteItem } from '../services/listService';
 import ItemRow from '../components/ItemRow';
 import { useNavigate } from 'react-router-dom';
 import { IconArrowLeft, IconPlus } from '@tabler/icons-react';

@@ -1,6 +1,6 @@
 import { Button, Modal, TextInput } from "@mantine/core";
 import { useState } from "react";
-import { createList } from "../services/shoppingListService";
+import { createList } from "../services/listService";
 
 export type AddListDialogProps = {
     opened: boolean;
