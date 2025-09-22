@@ -2,7 +2,7 @@ import React from 'react';
 import type { MouseEvent } from 'react';
 import type { List } from '../types/List';
 import { Card, Badge, Menu, ActionIcon, Text } from '@mantine/core';
-import { IconDots, IconTrash, IconUserPin } from '@tabler/icons-react';
+import { IconDots, IconTrash, IconPin, IconShare, IconPinnedOff } from '@tabler/icons-react';
 
 type Props = {
   list: List;
@@ -15,7 +15,7 @@ type Props = {
   isPinned?: boolean;
 };
 
-export const ShoppingListItem: React.FC<Props> = ({ list, onClick, onShare, onDelete, isOwner = true, onPinToggle, isPinned = false }) => {
+export const ShoppingListItem: React.FC<Props> = ({ list, onClick, onShare, onDelete, onPinToggle, isPinned = false }) => {
   const stopAnd = (e: MouseEvent, fn?: () => void) => {
     e.stopPropagation();
     fn?.();
@@ -49,6 +49,7 @@ export const ShoppingListItem: React.FC<Props> = ({ list, onClick, onShare, onDe
                 {list.isOwner ? (
                   <Menu.Item onClick={(e: MouseEvent) => stopAnd(e, () => onShare?.(list.id))}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <IconShare size={16} />
                       <span style={{ marginLeft: 8 }}>Jaa</span>
                     </div>
                   </Menu.Item>
@@ -58,7 +59,7 @@ export const ShoppingListItem: React.FC<Props> = ({ list, onClick, onShare, onDe
                 {typeof onPinToggle === 'function' ? (
                   <Menu.Item onClick={(e: MouseEvent) => stopAnd(e, () => onPinToggle?.(list.id, !!isPinned))}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <IconUserPin size={16} />
+                      {isPinned ? <IconPinnedOff size={16} /> : <IconPin size={16} />}
                       <span style={{ marginLeft: 8 }}>{isPinned ? 'Poista kiinnitys' : 'Kiinnitä'}</span>
                     </div>
                   </Menu.Item>
