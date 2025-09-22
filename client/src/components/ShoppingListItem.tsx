@@ -37,7 +37,7 @@ export const ShoppingListItem: React.FC<Props> = ({ list, onClick, onShare, onDe
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Badge color="cyan" variant="light">{list.items.length} tuotetta</Badge>
           {/* Show menu when there is at least one actionable prop: owner actions or pin toggle */}
-          {(isOwner || typeof onPinToggle === 'function') ? (
+          {(list.isOwner || typeof onPinToggle === 'function') ? (
             <Menu withinPortal>
               <Menu.Target>
                 <ActionIcon aria-label="Avaa valikko" onClick={(e: MouseEvent) => stopAnd(e)}>
@@ -46,7 +46,7 @@ export const ShoppingListItem: React.FC<Props> = ({ list, onClick, onShare, onDe
               </Menu.Target>
               <Menu.Dropdown>
                 {/* Owner-only: Share */}
-                {isOwner ? (
+                {list.isOwner ? (
                   <Menu.Item onClick={(e: MouseEvent) => stopAnd(e, () => onShare?.(list.id))}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <span style={{ marginLeft: 8 }}>Jaa</span>
@@ -65,7 +65,7 @@ export const ShoppingListItem: React.FC<Props> = ({ list, onClick, onShare, onDe
                 ) : null}
 
                 {/* Owner-only: Delete */}
-                {isOwner ? (
+                {list.isOwner ? (
                   <Menu.Item color="red" onClick={(e: MouseEvent) => stopAnd(e, () => onDelete?.(list.id))}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <IconTrash size={16} />

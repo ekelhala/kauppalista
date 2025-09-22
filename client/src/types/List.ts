@@ -5,4 +5,5 @@ export type List = {
     id: string;
     name: string;
     items: Item[]
+    isOwner: boolean;
 }

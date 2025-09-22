@@ -18,6 +18,7 @@ type AddItemResponse = {
 export const getLists = async (): Promise<List[]> => {
     const listData = (await api.get<List[]>('/lists')).data
     await Promise.all(listData.map(async list => {
+        list.isOwner = true;
         list.items = (await getItems(list.id)).items;
     }));
     return listData;
@@ -32,6 +33,7 @@ export const shareList = async (listId: string, toUser: string): Promise<void> =
 export const getSharedWithMeLists = async (): Promise<List[]> => {
     const listData = (await api.get<List[]>('/lists/shared')).data
     await Promise.all(listData.map(async list => {
+        list.isOwner = false;
         list.items = (await getItems(list.id)).items;
     }));
     return listData;
