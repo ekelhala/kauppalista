@@ -24,5 +24,5 @@ type AccessMapping struct {
 type PinnedList struct {
 	ID     string `json:"id" gorm:"primaryKey"`
 	UserID string `json:"user_id" gorm:"index"`
-	ListID string `json:"list_id" gorm:"index"`
+	ListID string `json:"list_id" gorm:"index;onDelete:CASCADE"`
 }
