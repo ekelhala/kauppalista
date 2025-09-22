@@ -10,7 +10,7 @@ type ListRepository struct {
 }
 
 func NewListRepository(db *gorm.DB) *ListRepository {
-	db.AutoMigrate(&List{})
+	db.AutoMigrate(&List{}, &AccessMapping{})
 	return &ListRepository{db: db}
 }
 
