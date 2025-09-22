@@ -17,6 +17,6 @@ type List struct {
 
 type AccessMapping struct {
 	ID     string `json:"id" gorm:"primaryKey"`
-	ListID string `json:"list_id" gorm:"index;uniqueIndex:idx_list_id"`
-	UserID string `json:"user_id" gorm:"index;uniqueIndex:idx_list_owner"`
+	ListID string `json:"list_id" gorm:"index"`
+	UserID string `json:"user_id" gorm:"index"`
 }

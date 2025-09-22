@@ -38,6 +38,11 @@ func (r *ListRepository) GetByID(listID string) ([]Item, error) {
 
 func (r *ListRepository) CreateList(name, ownerID string) (string, error) {
 	list := List{Name: name, Items: []Item{}, ID: uuid.New().String(), Owner: ownerID}
+	r.db.Create(&AccessMapping{
+		ID:     uuid.New().String(),
+		ListID: list.ID,
+		UserID: ownerID,
+	})
 	result := r.db.Create(&list)
 	return list.ID, result.Error
 }
@@ -53,6 +58,7 @@ func (r *ListRepository) AddItem(listID, itemName string) (string, error) {
 }
 
 func (r *ListRepository) DeleteList(listID string) error {
+	r.db.Delete(&AccessMapping{}, "list_id = ?", listID)
 	return r.db.Delete(&List{}, "id = ?", listID).Error
 }
 
@@ -69,6 +75,7 @@ func (r *ListRepository) GetSharedWithMe(userID string) ([]List, error) {
 	var lists []List
 	result := r.db.Joins("JOIN access_mappings ON access_mappings.list_id = lists.id").
 		Where("access_mappings.user_id = ?", userID).
+		Where("lists.owner != ?", userID).
 		Preload("Items").
 		Find(&lists)
 	return lists, result.Error
