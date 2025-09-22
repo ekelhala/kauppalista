@@ -28,3 +28,11 @@ export const getItems = async (listId: string): Promise<GetListItemsResponse> =>
 export const addItem = async (listId: string, name: string): Promise<AddItemResponse> => (await api.post<AddItemResponse>(`/lists/${listId}`, { name })).data
 export const checkItem = async (itemId: string, checked: boolean): Promise<void> => (await api.post<void>(`/items/${itemId}/toggle`, { checked })).data
 export const deleteItem = async (itemId: string): Promise<void> => (await api.delete<void>(`/items/${itemId}`)).data
+export const shareList = async (listId: string, toUser: string): Promise<void> => (await api.post<void>(`/lists/${listId}/share`, { to_user: toUser })).data
+export const getSharedWithMeLists = async (): Promise<List[]> => {
+    const listData = (await api.get<List[]>('/lists/shared')).data
+    await Promise.all(listData.map(async list => {
+        list.items = (await getItems(list.id)).items;
+    }));
+    return listData;
+}
