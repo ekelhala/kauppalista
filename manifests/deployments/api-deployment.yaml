@@ -39,6 +39,11 @@ spec:
                   key: password
             - name: PSQL_DB
               value: "kauppalista"
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-client-secret
+                  key: client-secret
           resources:
             requests:
               memory: "256Mi"
