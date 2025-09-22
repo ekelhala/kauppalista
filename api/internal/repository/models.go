@@ -20,3 +20,9 @@ type AccessMapping struct {
 	ListID string `json:"list_id" gorm:"index"`
 	UserID string `json:"user_id" gorm:"index"`
 }
+
+type PinnedList struct {
+	ID     string `json:"id" gorm:"primaryKey"`
+	UserID string `json:"user_id" gorm:"index"`
+	ListID string `json:"list_id" gorm:"index"`
+}

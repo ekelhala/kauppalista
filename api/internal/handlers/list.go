@@ -153,3 +153,49 @@ func (h *ListHandler) HandleGetSharedWithMe(w http.ResponseWriter, r *http.Reque
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(lists)
 }
+
+func (h *ListHandler) HandlePinList(w http.ResponseWriter, r *http.Request) {
+	var listID = chi.URLParam(r, "listID")
+	if listID == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "List ID is required"})
+		return
+	}
+	authenticatedUserID := auth.UserIDFromContext(r.Context())
+	if err := h.svc.PinList(listID, authenticatedUserID); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to pin list"})
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte{})
+}
+
+func (h *ListHandler) HandleUnpinList(w http.ResponseWriter, r *http.Request) {
+	var listID = chi.URLParam(r, "listID")
+	if listID == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "List ID is required"})
+		return
+	}
+	authenticatedUserID := auth.UserIDFromContext(r.Context())
+	if err := h.svc.UnpinList(listID, authenticatedUserID); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to unpin list"})
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte{})
+}
+
+func (h *ListHandler) HandleGetPinnedLists(w http.ResponseWriter, r *http.Request) {
+	ownerID := auth.UserIDFromContext(r.Context())
+	lists, err := h.svc.GetPinnedLists(ownerID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to retrieve lists"})
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(lists)
+}

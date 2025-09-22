@@ -10,7 +10,7 @@ type ListRepository struct {
 }
 
 func NewListRepository(db *gorm.DB) *ListRepository {
-	db.AutoMigrate(&List{}, &AccessMapping{})
+	db.AutoMigrate(&List{}, &AccessMapping{}, &PinnedList{})
 	return &ListRepository{db: db}
 }
 
@@ -103,4 +103,26 @@ func (r *ListRepository) HasAccess(listID, userID string) (bool, error) {
 		return false, result.Error
 	}
 	return true, nil
+}
+
+func (r *ListRepository) PinList(listID, userID string) error {
+	pinnedList := PinnedList{
+		ID:     uuid.New().String(),
+		ListID: listID,
+		UserID: userID,
+	}
+	return r.db.Create(&pinnedList).Error
+}
+
+func (r *ListRepository) UnpinList(listID, userID string) error {
+	return r.db.Where("list_id = ? AND user_id = ?", listID, userID).Delete(&PinnedList{}).Error
+}
+
+func (r *ListRepository) GetPinnedLists(userID string) ([]List, error) {
+	var lists []List
+	result := r.db.Joins("JOIN pinned_lists ON pinned_lists.list_id = lists.id").
+		Where("pinned_lists.user_id = ?", userID).
+		Preload("Items").
+		Find(&lists)
+	return lists, result.Error
 }

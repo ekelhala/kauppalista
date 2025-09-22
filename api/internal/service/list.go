@@ -67,6 +67,13 @@ func (s *ListService) ShareList(listID, toUser string, userID string) error {
 		return err
 	}
 	if isOwner {
+		isShared, err := s.listRepo.HasAccess(listID, toUser)
+		if err != nil {
+			return err
+		}
+		if isShared {
+			return errors.New("list is already shared with user")
+		}
 		return s.listRepo.ShareList(listID, toUser)
 	}
 	return errors.New("user is not the owner of the list")
@@ -75,4 +82,26 @@ func (s *ListService) ShareList(listID, toUser string, userID string) error {
 func (s *ListService) GetSharedWithMe(userID string) ([]repository.List, error) {
 	// Business logic to get lists shared with the user
 	return s.listRepo.GetSharedWithMe(userID)
+}
+
+func (s *ListService) PinList(listID, userID string) error {
+	// Business logic to pin a list for the user
+	hasAccess, err := s.listRepo.HasAccess(listID, userID)
+	if err != nil {
+		return err
+	}
+	if !hasAccess {
+		return errors.New("user does not have access to the list")
+	}
+	return s.listRepo.PinList(listID, userID)
+}
+
+func (s *ListService) UnpinList(listID, userID string) error {
+	// Business logic to unpin a list for the user
+	return s.listRepo.UnpinList(listID, userID)
+}
+
+func (s *ListService) GetPinnedLists(userID string) ([]repository.List, error) {
+	// Business logic to get pinned lists for the user
+	return s.listRepo.GetPinnedLists(userID)
 }

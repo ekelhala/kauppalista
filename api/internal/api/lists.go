@@ -19,6 +19,9 @@ func listsRouter(svc *service.ListService) http.Handler {
 	r.Delete("/{listID}", handler.HandleDeleteList)
 	r.Get("/shared", handler.HandleGetSharedWithMe)
 	r.Post("/{listID}/share", handler.HandleShareList)
+	r.Post("/{listID}/pin", handler.HandlePinList)
+	r.Post("/{listID}/unpin", handler.HandleUnpinList)
+	r.Get("/pinned", handler.HandleGetPinnedLists)
 
 	return r
 }
