@@ -11,27 +11,52 @@ import (
 )
 
 type KeycloakUser struct {
-	ID        string `json:"id"`
-	Username  string `json:"username"`
-	Email     string `json:"email"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	ID       string `json:"id"`
+	Username string `json:"username"`
 }
 
 type KeycloakService struct {
 	BaseURL    string // e.g. https://keycloak.example.com
 	Realm      string
 	AdminToken string // simplest approach: inject a token with rights; replace with client credentials retrieval
+	ClientId   string
 	Client     *http.Client
 }
 
-func NewKeycloakService(baseURL, realm, adminToken string) *KeycloakService {
+func NewKeycloakService(baseURL, realm, adminToken, clientId string) *KeycloakService {
 	return &KeycloakService{
 		BaseURL:    baseURL,
 		Realm:      realm,
 		AdminToken: adminToken,
+		ClientId:   clientId,
 		Client:     &http.Client{Timeout: 10 * time.Second},
 	}
+}
+
+func getToken(clientID string, clientSecret string, realm string, baseUrl string) (string, error) {
+
+	data := url.Values{}
+	data.Set("grant_type", "client_credentials")
+	data.Set("client_id", clientID)
+	data.Set("client_secret", clientSecret)
+
+	resp, err := http.PostForm(fmt.Sprintf("%s/realms/%s/protocol/openid-connect/token", baseUrl, realm), data)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to get token: %s", resp.Status)
+	}
+
+	var result struct {
+		AccessToken string `json:"access_token"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", err
+	}
+	return result.AccessToken, nil
 }
 
 // SearchUsers searches users in realm using Keycloak admin API search parameter.
@@ -51,7 +76,11 @@ func (k *KeycloakService) SearchUsers(ctx context.Context, q string) ([]Keycloak
 	qp.Set("briefRepresentation", "true")
 	req.URL.RawQuery = qp.Encode()
 
-	req.Header.Set("Authorization", "Bearer "+k.AdminToken)
+	accessToken, err := getToken(k.ClientId, k.AdminToken, k.Realm, k.BaseURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get access token: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+accessToken)
 	req.Header.Set("Accept", "application/json")
 
 	resp, err := k.Client.Do(req)

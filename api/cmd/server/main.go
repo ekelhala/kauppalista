@@ -54,10 +54,12 @@ func main() {
 	itemRepo := repository.NewItemRepository(db)
 	listService := service.NewListService(listRepo)
 	itemService := service.NewItemService(itemRepo)
-	kcService := service.NewKeycloakService("", config.Keycloak.Realm, os.Getenv("KEYCLOAK_CLIENT_SECRET"))
+	kcService := service.NewKeycloakService(config.Keycloak.Issuer,
+		config.Keycloak.Realm, os.Getenv("KEYCLOAK_CLIENT_SECRET"),
+		config.Keycloak.ClientID)
 	var authMiddleware func(http.Handler) http.Handler
 	if config.Keycloak.Issuer != "" && config.Keycloak.ClientID != "" {
-		authMiddleware = middleware.NewKeycloakMiddleware(config.Keycloak.Issuer, config.Keycloak.ClientID)
+		authMiddleware = middleware.NewKeycloakMiddleware(config.Keycloak.Issuer, config.Keycloak.Realm, config.Keycloak.ClientID)
 	}
 	router := api.NewRouter(listService,
 		itemService,

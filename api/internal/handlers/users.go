@@ -10,11 +10,8 @@ import (
 )
 
 type UserResponse struct {
-	ID        string `json:"id"`
-	Username  string `json:"username"`
-	Email     string `json:"email,omitempty"`
-	FirstName string `json:"firstName,omitempty"`
-	LastName  string `json:"lastName,omitempty"`
+	ID       string `json:"id"`
+	Username string `json:"username"`
 }
 
 func SearchUsersHandler(kc *service.KeycloakService) http.HandlerFunc {
@@ -30,11 +27,8 @@ func SearchUsersHandler(kc *service.KeycloakService) http.HandlerFunc {
 		resp := make([]UserResponse, 0, len(users))
 		for _, u := range users {
 			resp = append(resp, UserResponse{
-				ID:        u.ID,
-				Username:  u.Username,
-				Email:     u.Email,
-				FirstName: u.FirstName,
-				LastName:  u.LastName,
+				ID:       u.ID,
+				Username: u.Username,
 			})
 		}
 		w.Header().Set("Content-Type", "application/json")

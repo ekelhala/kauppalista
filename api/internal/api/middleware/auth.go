@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -15,10 +16,10 @@ import (
 // middleware places typed keys from internal/auth into the request context.
 
 // NewKeycloakMiddleware returns a middleware that validates bearer tokens using JWKS URL.
-func NewKeycloakMiddleware(issuer, clientId string) func(http.Handler) http.Handler {
+func NewKeycloakMiddleware(issuer string, realm string, clientId string) func(http.Handler) http.Handler {
 	// create OIDC provider and verifier
 	ctx := context.Background()
-	provider, err := oidc.NewProvider(ctx, issuer)
+	provider, err := oidc.NewProvider(ctx, fmt.Sprintf("%s/realms/%s", issuer, realm))
 	if err != nil {
 		log.Panicf("failed to create OIDC provider from issuer %s: %v", issuer, err)
 	}
