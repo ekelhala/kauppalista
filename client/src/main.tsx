@@ -14,7 +14,10 @@ import userManager from './authConfig.ts';
 async function handleOidcRedirect() {
   try {
     const href = window.location.href;
-    if (href.includes('code=') || href.includes('state=') || href.includes('session_state=')) {
+    // Only process the interactive redirect callback in the top-level window.
+    // Silent renew callbacks will be delivered to the `silent_redirect_uri` and
+    // handled inside the iframe by a route/component.
+    if (window.parent === window && (href.includes('code=') || href.includes('state=') || href.includes('session_state='))) {
       // Let oidc-client-ts process the redirect response
       await userManager.signinRedirectCallback();
       // Replace the URL with a clean one (same origin + pathname)
