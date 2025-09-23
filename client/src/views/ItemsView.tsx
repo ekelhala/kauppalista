@@ -32,7 +32,7 @@ export const ListView = ({ listId, listName }: Props) => {
       const res = await getItems(listId);
       setItems(sortItems(res.items));
     }
-    catch (e) {
+    catch {
       setListExists(false);
     }
     finally {
@@ -58,7 +58,7 @@ export const ListView = ({ listId, listName }: Props) => {
 
     try {
       await checkItem(itemId, checked);
-    } catch (e) {
+    } catch {
       // clear pending reorder and revert optimistic change on error
       if (timersRef.current[itemId]) {
         clearTimeout(timersRef.current[itemId]);
@@ -73,8 +73,8 @@ export const ListView = ({ listId, listName }: Props) => {
     try {
       await addItem(listId, name.trim());
       await fetch();
-    } catch (e) {
-      console.error("Error adding item:", e);
+    } catch (err) {
+      console.error("Error adding item:", err);
     }
   }
 

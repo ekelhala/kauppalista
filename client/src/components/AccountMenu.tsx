@@ -38,9 +38,9 @@ export const AccountMenu = () => {
                 <Menu.Item onClick={async () => {
                     try {
                         await auth.signoutRedirect();
-                    } catch (err) {
-                        try { await auth.removeUser(); } catch (e) { console.error('Logout failed', e); }
-                    }
+                    } catch {
+                            try { await auth.removeUser(); } catch (e) { console.error('Logout failed', e); }
+                        }
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <IconLogout size={16} />

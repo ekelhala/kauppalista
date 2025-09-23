@@ -29,9 +29,7 @@ api.interceptors.request.use((config) => {
       // @ts-ignore allow axios header typing
       config.headers.Authorization = `Bearer ${token}`;
     }
-  } catch (e) {
-    // safe noop
-  }
+  } catch {}
   return config;
 });
 
