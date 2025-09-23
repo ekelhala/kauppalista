@@ -6,7 +6,7 @@ metadata:
     app: kauppalista-api
   namespace: kauppalista
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: kauppalista-api
@@ -46,11 +46,23 @@ spec:
                   key: client-secret
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
               memory: "512Mi"
-              cpu: "750m"
+              cpu: "600m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1200m"
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            failureThreshold: 6
       volumes:
         - name: config-volume
           configMap:
