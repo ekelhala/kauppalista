@@ -1,4 +1,4 @@
-import { Container, Center, Loader, Text } from '@mantine/core';
+import { Container, Center, Loader } from '@mantine/core';
 import { BrowserRouter, Routes, Route, useParams, useLocation } from 'react-router-dom';
 import { ListsView } from './views/ListsView';
 import { ListView } from './views/ItemsView';
@@ -6,16 +6,17 @@ import { useAuth } from 'react-oidc-context';
 import { useEffect } from 'react';
 import { registerTokenGetter } from './services/api';
 import SilentRenew from './components/SilentRenew';
+import FrontPage from './components/FrontPage';
+import AuthError from './components/AuthError';
 
 const App = () => {
 
   const auth = useAuth();
 
   useEffect(() => {
-    if (!auth.isLoading && !auth.user && !auth.error) {
-      // If user not present start interactive signin
-      auth.signinRedirect();
-    }
+    // Do not auto-redirect to sign-in on mount; show a front page instead and
+    // let the user initiate sign-in. Keep a fallback (below) for cases where
+    // auth stays stuck in loading state.
 
     // Fallback: if auth stays loading for too long (e.g. silent renew blocked or
     // storage is stale) trigger a normal redirect login. Don't do this while
@@ -23,7 +24,7 @@ const App = () => {
     const href = window.location.href;
     const isCallback = href.includes('code=') || href.includes('state=') || href.includes('session_state=');
     let fallbackTimer: number | undefined;
-    if (auth.isLoading && !isCallback) {
+  if (auth.isLoading && !isCallback) {
       // After 5s of loading, if still no user / error, start interactive signin.
       fallbackTimer = window.setTimeout(() => {
         if (auth.isLoading && !auth.user && !auth.error) {
@@ -57,14 +58,10 @@ const App = () => {
             <Route path="/silent-renew" element={<SilentRenew />} />
           </Routes>
         ) : auth.error ? (
-          <Center style={{ height: '50vh', flexDirection: 'column' }}>
-            <Text color="red">Authentication error. Please sign in.</Text>
-            <Text mt="md" onClick={() => auth.signinRedirect()} style={{ cursor: 'pointer', textDecoration: 'underline' }}>Sign in</Text>
-          </Center>
+          <AuthError />
         ) : (
-          <Center style={{ height: '50vh', flexDirection: 'column' }}>
-            <Text>Redirecting to sign-in...</Text>
-          </Center>
+          // Not loading, not authenticated, no error -> show front page
+          <FrontPage />
         )}
       </Container>
     </BrowserRouter>
