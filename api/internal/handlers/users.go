@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/ekelhala/kauppalista/internal/auth"
 	"github.com/ekelhala/kauppalista/internal/service"
 )
 
@@ -16,6 +17,7 @@ type UserResponse struct {
 
 func SearchUsersHandler(kc *service.KeycloakService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		userID := auth.UserIDFromContext(r.Context())
 		q := r.URL.Query().Get("q")
 		users, err := kc.SearchUsers(context.Background(), q)
 		if err != nil {
@@ -26,10 +28,12 @@ func SearchUsersHandler(kc *service.KeycloakService) http.HandlerFunc {
 		}
 		resp := make([]UserResponse, 0, len(users))
 		for _, u := range users {
-			resp = append(resp, UserResponse{
-				ID:       u.ID,
-				Username: u.Username,
-			})
+			if u.ID != userID { // Exclude the authenticated user from the results
+				resp = append(resp, UserResponse{
+					ID:       u.ID,
+					Username: u.Username,
+				})
+			}
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
