@@ -60,7 +60,13 @@ export const ShareListDialog = ({ opened, onClose, listId, onShared }: ShareList
                 <TextInput
                     placeholder="Hae käyttäjää"
                     value={query}
-                    onChange={(e) => setQuery(e.currentTarget.value)}
+                    onChange={(e) => {
+                        if (e.currentTarget.value.trim() === '') {
+                            setResults([]);
+                            setSelectedUser(null);
+                            setLoading(false);
+                        }
+                        setQuery(e.currentTarget.value)}}
                     mb="sm"
                 />
 

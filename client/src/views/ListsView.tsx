@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { List } from "../types/List";
 import { deleteList, getLists, getSharedWithMeLists, getPinnedLists, pinList, unpinList } from "../services/listService";
-import { Container, Title, Text, Loader, Button, Tabs } from '@mantine/core';
+import { Container, Title, Text, Loader, Button, Tabs, useMantineTheme } from '@mantine/core';
 import { AddListDialog } from "../components/AddListDialog";
 import { ShareListDialog } from "../components/ShareListDialog";
 import ShoppingListItem from '../components/ShoppingListItem';
@@ -12,6 +12,7 @@ import { useAuth } from "react-oidc-context";
 
 export const ListsView = () => {
   const navigate = useNavigate();
+  const theme = useMantineTheme();
   const [lists, setLists] = useState<List[]>([]);
   const [pinnedLists, setPinnedLists] = useState<List[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,13 +62,29 @@ export const ListsView = () => {
   <ShareListDialog opened={shareDialogOpen} onClose={() => { setShareDialogOpen(false); setShareListId(null); }} listId={shareListId} onShared={getAndSetLists} />
 
       {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
         <Loader />
+        </div>
       ) : (
-        <Tabs defaultValue="pinned" keepMounted={false}>
-          <Tabs.List>
-            <Tabs.Tab value="pinned">Kiinnitetyt</Tabs.Tab>
-            <Tabs.Tab value="my">Omat listat</Tabs.Tab>
-            <Tabs.Tab value="shared">Jaettu kanssani</Tabs.Tab>
+        <Tabs defaultValue="pinned" 
+              keepMounted={false} 
+              variant="outline">
+          <Tabs.List mb={"md"}>
+            <Tabs.Tab value="pinned">
+              Kiinnitetyt (
+              <span style={{ color: theme.colors[theme.primaryColor][6] }}>{pinnedLists.length}</span>
+              )
+            </Tabs.Tab>
+            <Tabs.Tab value="my">
+              Omat listat (
+              <span style={{ color: theme.colors[theme.primaryColor][6] }}>{lists.length}</span>
+              )
+            </Tabs.Tab>
+            <Tabs.Tab value="shared">
+              Jaettu kanssani (
+              <span style={{ color: theme.colors[theme.primaryColor][6] }}>{sharedWithMeLists.length}</span>
+              )
+            </Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="pinned">
