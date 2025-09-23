@@ -69,14 +69,20 @@ export const ListsView = () => {
         <Tabs defaultValue="pinned" 
               keepMounted={false} 
               variant="outline">
-          <Tabs.List mb={"md"}>
+          <Tabs.List mb={"md"} style={{ display: 'flex',
+                                        flexWrap: 'nowrap',
+                                        overflowX: 'auto',
+                                        gap: 8,
+                                        whiteSpace: 'nowrap',
+                                        WebkitOverflowScrolling: 'touch'
+                                        }}>
             <Tabs.Tab value="pinned">
               Kiinnitetyt (
               <span style={{ color: theme.colors[theme.primaryColor][6] }}>{pinnedLists.length}</span>
               )
             </Tabs.Tab>
             <Tabs.Tab value="my">
-              Omat listat (
+              Omat (
               <span style={{ color: theme.colors[theme.primaryColor][6] }}>{lists.length}</span>
               )
             </Tabs.Tab>
