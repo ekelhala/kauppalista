@@ -18,8 +18,7 @@ const userManager = new UserManager({
     // Store user in localStorage so state survives reloads
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     response_type: "code",
-    // Request offline_access if you want refresh token (Keycloak scope)
-    scope: 'openid profile email offline_access',
+    scope: 'openid profile email',
 });
 
 export default userManager;
