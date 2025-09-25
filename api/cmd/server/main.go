@@ -60,6 +60,8 @@ func main() {
 	var authMiddleware func(http.Handler) http.Handler
 	if config.Keycloak.Issuer != "" && config.Keycloak.ClientID != "" {
 		authMiddleware = middleware.NewKeycloakMiddleware(config.Keycloak.Issuer, config.Keycloak.Realm, config.Keycloak.ClientID)
+	} else {
+		log.Panic("Keycloak configuration missing, cannot start the server!")
 	}
 	router := api.NewRouter(listService,
 		itemService,
