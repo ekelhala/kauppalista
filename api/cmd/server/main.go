@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -26,10 +30,10 @@ func main() {
 	configPath := *configFlag
 	config := config.LoadConfig(configPath)
 	if config == nil {
-		log.Panic("Failed to load configuration!")
+		log.Panic("failed to load configuration!")
 	}
 
-	log.Println("Configuration loaded successfully.")
+	log.Println("configuration loaded successfully.")
 	routerConfig := &api.RouterConfig{
 		CorsAllowedOrigins:   config.Cors.AllowOrigins,
 		CorsAllowCredentials: config.Cors.AllowCredentials,
@@ -37,7 +41,7 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("No .env file found, proceeding with environment variables")
+		log.Println("no .env file found! proceeding with environment variables")
 	}
 	dbConn := fmt.Sprintf("host=%s user=%s dbname=%s password=%s",
 		os.Getenv("PSQL_HOST"),
@@ -61,13 +65,44 @@ func main() {
 	if config.Keycloak.Issuer != "" && config.Keycloak.ClientID != "" {
 		authMiddleware = middleware.NewKeycloakMiddleware(config.Keycloak.Issuer, config.Keycloak.Realm, config.Keycloak.ClientID)
 	} else {
-		log.Panic("Keycloak configuration missing, cannot start the server!")
+		log.Panic("keycloak configuration missing, cannot start the server!")
 	}
 	router := api.NewRouter(listService,
 		itemService,
 		kcService,
 		routerConfig,
 		authMiddleware)
-	log.Printf("starting server on %s:%d", config.Server.Host, config.Server.Port)
-	http.ListenAndServe(fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port), router.Mux)
+	srvAddr := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
+
+	server := &http.Server{
+		Addr:    srvAddr,
+		Handler: router.Mux,
+	}
+
+	// Start server in a goroutine so we can listen for shutdown signals
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+	log.Printf("server is running at %s", srvAddr)
+
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+	log.Println("shutdown signal received, server exiting...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("server forced to shutdown: %v", err)
+	}
+
+	// Close underlying database connection if possible
+	if sqlDB, err := db.DB(); err == nil {
+		_ = sqlDB.Close()
+	}
+
+	log.Println("server exited cleanly")
 }
