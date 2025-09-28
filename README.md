@@ -16,7 +16,6 @@ Kauppalista is a full-stack shopping list application (API + single-page client)
 - Containerization & Deployment
 	- Dockerfiles for API and client
 	- Kubernetes manifests and configmaps under `manifests/` (deployments, services, ingress routes, PVC)
-    - 
 
 ## Architecture (high level)
 
