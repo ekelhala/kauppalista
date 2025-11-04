@@ -22,6 +22,7 @@ func listsRouter(svc *service.ListService) http.Handler {
 	r.Post("/{listID}/pin", handler.HandlePinList)
 	r.Post("/{listID}/unpin", handler.HandleUnpinList)
 	r.Get("/pinned", handler.HandleGetPinnedLists)
+	r.Delete("/{listID}/clear_selected", handler.HandleDeleteSelectedItems)
 
 	return r
 }

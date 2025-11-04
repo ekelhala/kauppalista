@@ -126,3 +126,12 @@ func (r *ListRepository) GetPinnedLists(userID string) ([]List, error) {
 		Find(&lists)
 	return lists, result.Error
 }
+
+func (r *ListRepository) DeleteSelectedItems(listID string) error {
+	var itemIDs []string
+	result := r.db.Model(&Item{}).Where("list_id = ? AND checked = ?", listID, true).Pluck("id", &itemIDs)
+	if result.Error != nil {
+		return result.Error
+	}
+	return r.db.Where("list_id = ? AND id IN ?", listID, itemIDs).Delete(&Item{}).Error
+}

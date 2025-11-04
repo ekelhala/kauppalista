@@ -38,7 +38,7 @@ export const ShoppingListItem: React.FC<Props> = ({ list, onClick, onShare, onDe
           <Badge color="cyan" variant="light">{list.items.length} tuotetta</Badge>
           {/* Show menu when there is at least one actionable prop: owner actions or pin toggle */}
           {(list.isOwner || typeof onPinToggle === 'function') ? (
-            <Menu withinPortal>
+            <Menu withinPortal withArrow>
               <Menu.Target>
                 <ActionIcon aria-label="Avaa valikko" onClick={(e: MouseEvent) => stopAnd(e)}>
                   <IconDots size={18} />

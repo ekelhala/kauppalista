@@ -47,3 +47,4 @@ export const getPinnedLists = async (): Promise<List[]> => {
     }));
     return listData;
 }
+export const clearSelectedItems = async (listId: string): Promise<void> => (await api.delete<void>(`/lists/${listId}/clear_selected`)).data

@@ -199,3 +199,21 @@ func (h *ListHandler) HandleGetPinnedLists(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(lists)
 }
+
+func (h *ListHandler) HandleDeleteSelectedItems(w http.ResponseWriter, r *http.Request) {
+	var listID = chi.URLParam(r, "listID")
+	var userID = auth.UserIDFromContext(r.Context())
+	if listID == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "List ID is required"})
+		return
+	}
+	err := h.svc.DeleteSelectedItems(listID, userID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to delete selected items"})
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+	w.Write([]byte{})
+}

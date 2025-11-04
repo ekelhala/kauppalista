@@ -105,3 +105,14 @@ func (s *ListService) GetPinnedLists(userID string) ([]repository.List, error) {
 	// Business logic to get pinned lists for the user
 	return s.listRepo.GetPinnedLists(userID)
 }
+
+func (s *ListService) DeleteSelectedItems(listID string, userID string) error {
+	hasAccess, err := s.listRepo.HasAccess(listID, userID)
+	if err != nil {
+		return err
+	}
+	if !hasAccess {
+		return errors.New("user does not have access to the list")
+	}
+	return s.listRepo.DeleteSelectedItems(listID)
+}

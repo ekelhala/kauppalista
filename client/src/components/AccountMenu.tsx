@@ -13,7 +13,7 @@ export const AccountMenu = () => {
     const initial = (displayName || username) ? (displayName || username).charAt(0).toUpperCase() : '?';
 
     return (
-        <Menu withinPortal>
+        <Menu withinPortal withArrow position="bottom">
             <Menu.Target>
                 <UnstyledButton style={{ borderRadius: 9999 }} aria-label="Avaa käyttäjävalikko">
                     <Group>
