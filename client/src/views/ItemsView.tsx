@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import type { Item } from '../types/Item';
 import { Title, Divider, Button, List, Loader } from '@mantine/core';
-import { addItem, getItems, checkItem, deleteItem } from '../services/listService';
+import { addItem, getItems, checkItem, deleteItem, clearSelectedItems } from '../services/listService';
 import ItemRow from '../components/ItemRow';
 import { useNavigate } from 'react-router-dom';
 import { IconArrowLeft, IconPlus } from '@tabler/icons-react';
 import { AddItemDialog } from '../components/AddItemDialog';
+import { ListOptionsMenu } from '../components/ListOptionsMenu';
 
 type Props = {
   listId: string;
@@ -26,7 +27,7 @@ export const ListView = ({ listId, listName }: Props) => {
   const reorderDelay = 300; // ms to wait before moving checked items
   const timersRef = useRef<Record<string, number>>({});
 
-  const fetch = async () => {
+  const fetchListItems = async () => {
     setLoading(true);
     try {
       const res = await getItems(listId);
@@ -72,14 +73,23 @@ export const ListView = ({ listId, listName }: Props) => {
     if (!name.trim()) return;
     try {
       await addItem(listId, name.trim());
-      await fetch();
+      await fetchListItems();
     } catch (err) {
       console.error("Error adding item:", err);
     }
   }
 
+  const handleClearSelected = async () => {
+    try {
+      await clearSelectedItems(listId);
+      await fetchListItems();
+    } catch (err) {
+      console.error("Error clearing selected items:", err);
+    }
+  }
+
   useEffect(() => {
-    fetch();
+    fetchListItems();
     return () => {
       // clear any pending timers on unmount to avoid state updates after unmount
       Object.values(timersRef.current).forEach(id => clearTimeout(id));
@@ -102,8 +112,9 @@ export const ListView = ({ listId, listName }: Props) => {
           <IconArrowLeft size={16} style={{ marginRight: 4 }} />
           Takaisin
         </Button>
-        <div>
+        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
           <Title order={3} style={{ margin: 0 }}>{listName}</Title>
+          <ListOptionsMenu onClearSelected={() => handleClearSelected()} />
         </div>
       </div>
       <Divider my="sm" />
@@ -119,7 +130,7 @@ export const ListView = ({ listId, listName }: Props) => {
                 onCheck={handleCheck}
                 onDelete={async (id) => {
                   await deleteItem(id);
-                  await fetch();
+                  await fetchListItems();
                 }}
               />
           ))}
