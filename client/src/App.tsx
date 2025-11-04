@@ -14,6 +14,7 @@ const App = () => {
 
   const [theme, setTheme] = useState<Theme>('light');
   const { setColorScheme } = useMantineColorScheme();
+  const [loadingTheme, setLoadingTheme] = useState(true);
 
   const auth = useAuth();
   // Track if we've already attempted a one-time silent signin during this
@@ -40,9 +41,23 @@ const App = () => {
     }
   }, [auth]);
 
+  // Effects for theme changes and setting theme on load
+
   useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as Theme | null;
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      setTheme(savedTheme);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (loadingTheme) {
+      setLoadingTheme(false);
+      return;
+    }
     setColorScheme(theme === 'dark' ? 'dark' : 'light');
-  }, [theme, setColorScheme]);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   return (
     <BrowserRouter>
