@@ -1,9 +1,15 @@
 import { Avatar, Menu, UnstyledButton, Group, ActionIcon } from "@mantine/core";
 import { useAuth } from 'react-oidc-context';
-import { IconLogout, IconCopy, IconCheck } from '@tabler/icons-react';
+import { IconLogout, IconCopy, IconCheck, IconMoon, IconSun } from '@tabler/icons-react';
 import { useState } from 'react';
+import type { Theme } from "../types/Theme";
 
-export const AccountMenu = () => {
+export interface AccountMenuProps {
+    onThemeToggle: () => void;
+    theme: Theme;
+}
+
+export const AccountMenu = ({ onThemeToggle, theme }: AccountMenuProps) => {
     const auth = useAuth();
 
     const displayNameRaw = auth.user?.profile?.name || auth.user?.profile?.given_name || '';
@@ -35,6 +41,26 @@ export const AccountMenu = () => {
                     ) : null}
                 </div>
                 <Menu.Divider />
+                <Menu.Label>Asetukset</Menu.Label>
+                <Menu.Item onClick={onThemeToggle}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        {
+                            theme === 'dark' ? (
+                                <>
+                                    <IconSun size={16} />
+                                    Vaalea tila
+                                </>
+                            ) : (
+                                <>
+                                    <IconMoon size={16} />
+                                    Tumma tila
+                                </>
+                            )
+                        }
+                    </div>
+                </Menu.Item>
+                <Menu.Divider />
+                <Menu.Label>Käyttäjätoiminnot</Menu.Label>
                 <Menu.Item onClick={async () => {
                     try {
                         await auth.signoutRedirect();

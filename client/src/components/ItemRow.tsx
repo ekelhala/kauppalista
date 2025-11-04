@@ -1,5 +1,5 @@
 import type { Item } from '../types/Item';
-import { Checkbox, Text, Card, ActionIcon, Menu } from '@mantine/core';
+import { Checkbox, Text, Card, ActionIcon, Menu, useMantineColorScheme } from '@mantine/core';
 import { IconTrash, IconPlus, IconMinus, IconDotsVertical } from '@tabler/icons-react';
 import { useState } from 'react';
 import { decreaseItemQuantity, increaseItemQuantity } from '../services/itemService';
@@ -13,6 +13,7 @@ type Props = {
 export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
   const [quantity, setQuantity] = useState<number>(item.quantity);
   const [menuOpened, setMenuOpened] = useState(false);
+  const { colorScheme } = useMantineColorScheme();
 
   const dec = () => {
     setQuantity(q => Math.max(1, q - 1));
@@ -23,9 +24,22 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
     increaseItemQuantity(item.id);
 }
 
+  const getCardStyles = () => {
+    const isDark = colorScheme === 'dark';
+    const baseColor = isDark ? 'var(--mantine-color-dark-6)' : 'var(--mantine-color-white)';
+    const checkedColor = isDark ? 'var(--mantine-color-dark-5)' : 'var(--mantine-color-gray-0)';
+    
+    return {
+      width: '100%',
+      padding: 8,
+      marginBottom: 4,
+      backgroundColor: item.checked ? checkedColor : baseColor,
+      opacity: item.checked ? 0.6 : 1
+    };
+  };
+
   return (
-    <Card radius="sm" shadow="sm" withBorder 
-      style={{ width: '100%', padding: 8, marginBottom: 4, backgroundColor: item.checked ? 'var(--mantine-color-gray-0, #f8f9fa)' : 'white', opacity: item.checked ? 0.6 : 1 }}>
+    <Card radius="sm" shadow="sm" withBorder style={getCardStyles()}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
           <Checkbox
@@ -52,7 +66,7 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
                 <Menu.Item onClick={inc}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><IconPlus size={16} />Lisää</span></Menu.Item>
                 <Menu.Item onClick={dec}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><IconMinus size={16} />Vähennä</span></Menu.Item>
                 <Menu.Item onClick={() => {setMenuOpened(false); onDelete(item.id)}}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--mantine-color-red-6, red)' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--mantine-color-red-6)' }}>
                     <IconTrash size={16} />
                     Poista
                   </span>

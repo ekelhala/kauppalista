@@ -3,12 +3,17 @@ import { BrowserRouter, Routes, Route, useParams, useLocation } from 'react-rout
 import { ListsView } from './views/ListsView';
 import { ListView } from './views/ItemsView';
 import { useAuth } from 'react-oidc-context';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { registerTokenGetter } from './services/api';
 import SilentRenew from './components/SilentRenew';
 import FrontPage from './components/FrontPage';
+import type { Theme } from './types/Theme';
+import { useMantineColorScheme } from '@mantine/core';
 
 const App = () => {
+
+  const [theme, setTheme] = useState<Theme>('light');
+  const { setColorScheme } = useMantineColorScheme();
 
   const auth = useAuth();
   // Track if we've already attempted a one-time silent signin during this
@@ -35,6 +40,10 @@ const App = () => {
     }
   }, [auth]);
 
+  useEffect(() => {
+    setColorScheme(theme === 'dark' ? 'dark' : 'light');
+  }, [theme, setColorScheme]);
+
   return (
     <BrowserRouter>
       <Container size="sm" py="xl">
@@ -44,7 +53,7 @@ const App = () => {
           </Center>
         ) : auth.isAuthenticated ? (
           <Routes>
-            <Route path="/" element={<ListsView />} />
+            <Route path="/" element={<ListsView theme={theme} setTheme={setTheme} />} />
             <Route path="/lists/:id" element={<ListViewWrapper />} />
             {/* Route used only for silent renew iframe callback */}
             <Route path="/silent-renew" element={<SilentRenew />} />

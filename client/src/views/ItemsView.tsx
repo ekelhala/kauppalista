@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import type { Item } from '../types/Item';
-import { Title, Divider, Button, List, Loader } from '@mantine/core';
+import { Title, Divider, Button, List, Loader, useMantineColorScheme } from '@mantine/core';
 import { addItem, getItems, checkItem, deleteItem, clearSelectedItems } from '../services/listService';
 import ItemRow from '../components/ItemRow';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,7 @@ export const ListView = ({ listId, listName }: Props) => {
   const [loading, setLoading] = useState(true);
   const [dialogOpened, setDialogOpened] = useState(false);
   const [listExists, setListExists] = useState(true);
+  const { colorScheme } = useMantineColorScheme();
 
   const navigate = useNavigate();
 
@@ -135,7 +136,14 @@ export const ListView = ({ listId, listName }: Props) => {
               />
           ))}
         </List>
-        <div style={{ position: 'sticky', bottom: 0, width: '100%', background: 'white', paddingTop: 8, paddingBottom: 8 }}>
+        <div style={{ 
+          position: 'sticky', 
+          bottom: 0, 
+          width: '100%', 
+          background: colorScheme === 'dark' ? 'var(--mantine-color-dark-7)' : 'var(--mantine-color-white)', 
+          paddingTop: 8, 
+          paddingBottom: 8 
+        }}>
           <Button 
             variant='light' 
             size='xs' 

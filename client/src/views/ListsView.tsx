@@ -9,10 +9,16 @@ import { useNavigate } from 'react-router-dom';
 import { IconPlus } from '@tabler/icons-react';
 import { AccountMenu } from '../components/AccountMenu';
 import { useAuth } from "react-oidc-context";
+import type { Theme } from "../types/Theme";
 
-export const ListsView = () => {
+export interface ListsViewParams {
+    setTheme: (theme: Theme) => void;
+    theme: Theme;
+}
+
+export const ListsView = ({ setTheme, theme }: ListsViewParams) => {
   const navigate = useNavigate();
-  const theme = useMantineTheme();
+  const mantineTheme = useMantineTheme();
   const [lists, setLists] = useState<List[]>([]);
   const [pinnedLists, setPinnedLists] = useState<List[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +42,11 @@ export const ListsView = () => {
     }
   }
 
+  const handleThemeToggle = () => {
+    const newTheme: Theme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+  }
+
   useEffect(() => {
     if (!auth.isLoading && auth.isAuthenticated) {
       getAndSetLists();
@@ -52,8 +63,10 @@ export const ListsView = () => {
             Uusi
           </Button>
           <div>
-            {/* Account menu shows avatar and logout */}
-            <AccountMenu />
+            <AccountMenu 
+              onThemeToggle={handleThemeToggle} 
+              theme={theme} 
+            />
           </div>
         </div>
       </div>
@@ -78,17 +91,17 @@ export const ListsView = () => {
                                         }}>
             <Tabs.Tab value="pinned">
               Kiinnitetyt (
-              <span style={{ color: theme.colors[theme.primaryColor][6] }}>{pinnedLists.length}</span>
+              <span style={{ color: mantineTheme.colors[mantineTheme.primaryColor][6] }}>{pinnedLists.length}</span>
               )
             </Tabs.Tab>
             <Tabs.Tab value="my">
               Omat (
-              <span style={{ color: theme.colors[theme.primaryColor][6] }}>{lists.length}</span>
+              <span style={{ color: mantineTheme.colors[mantineTheme.primaryColor][6] }}>{lists.length}</span>
               )
             </Tabs.Tab>
             <Tabs.Tab value="shared">
               Jaettu kanssani (
-              <span style={{ color: theme.colors[theme.primaryColor][6] }}>{sharedWithMeLists.length}</span>
+              <span style={{ color: mantineTheme.colors[mantineTheme.primaryColor][6] }}>{sharedWithMeLists.length}</span>
               )
             </Tabs.Tab>
           </Tabs.List>
