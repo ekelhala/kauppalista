@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: kauppalista-api
-          image: registry.kelhala.com/kauppalista-api:latest
+          image: ekelhala/kauppalista-api:latest
           ports:
             - containerPort: 8080
           volumeMounts:
@@ -70,5 +70,3 @@ spec:
             items:
               - key: config.yaml
                 path: config.yaml
-      imagePullSecrets:
-        - name: registry-cred
