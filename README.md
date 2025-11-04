@@ -37,8 +37,7 @@ Prerequisites: Go toolchain (see `go.mod` for version), Node.js and npm/yarn (ch
 1. Start a Postgres instance (local Docker) or point the API to an existing DB. Example (adjust credentials and ports):
 
 ```bash
-# run a Postgres container (example)
-docker run --name kauppalista-db -e POSTGRES_PASSWORD=secret -e POSTGRES_USER=kauppa -e POSTGRES_DB=kauppalista -p 5432:5432 -d postgres:15
+docker run --name kauppalista-db -e POSTGRES_PASSWORD=kauppalista -e POSTGRES_USER=kauppalista -e POSTGRES_DB=kauppalista -p 5432:5432 -d postgres:15
 ```
 
 2. (Optional) Start Keycloak or another OIDC provider and configure a client/realm per `internal/service/keycloak.go`.
