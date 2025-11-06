@@ -22,7 +22,7 @@ jobs:
 
       - name: Generate tags
         id: generate-tags
-        run: echo "TAG={{ github.sha }}" >> $GITHUB_OUTPUT
+        run: echo "TAG=${{ github.sha }}" >> $GITHUB_OUTPUT
 
       - name: Build and push API image
         uses: docker/build-push-action@v4
@@ -50,7 +50,7 @@ jobs:
 
       - name: Generate tags
         id: generate-tags
-        run: echo "TAG={{ github.sha }}" >> $GITHUB_OUTPUT
+        run: echo "TAG=${{ github.sha }}" >> $GITHUB_OUTPUT
 
       - name: Build and push Client image
         uses: docker/build-push-action@v4
