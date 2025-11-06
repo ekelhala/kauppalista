@@ -29,9 +29,9 @@ jobs:
         with:
           context: ./api
           push: true
-          tags: 
-            - "${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-api:${{ steps.generate-tags.outputs.TAG }}"
-            - "${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-api:latest"
+          tags: |
+           "${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-api:${{ steps.generate-tags.outputs.TAG }}",
+           "${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-api:latest"
 
   build-client:
     runs-on: ubuntu-latest
@@ -57,6 +57,6 @@ jobs:
         with:
           context: ./client
           push: true
-          tags: 
-            - "${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-client:${{ steps.generate-tags.outputs.TAG }}"
-            - "${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-client:latest"
+          tags: |
+            "${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-client:${{ steps.generate-tags.outputs.TAG }}",
+            "${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-client:latest"
