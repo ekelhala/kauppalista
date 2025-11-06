@@ -1,0 +1,31 @@
+name: update-deployment
+
+on:
+  workflow_run:
+    workflows: ["build-and-push"]
+    types: ["completed"]
+
+jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update API Deployment
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.CI_BOT_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: "deploy kauppalista-api"
+  
+  deploy-client:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Client Deployment
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.CI_BOT_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: "deploy kauppalista-client"
