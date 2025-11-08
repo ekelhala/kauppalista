@@ -12,8 +12,8 @@ RUN npm run build
 FROM nginx:alpine-slim
 
 COPY --from=builder /app/dist /usr/share/nginx/html
-COPY ./config/nginx.conf /etc/nginx/nginx.conf
+COPY ./config/nginx.conf.template /etc/nginx/nginx.conf.template
 
 EXPOSE 3000
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["sh", "-c", "envsubst '${API_HOST}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]

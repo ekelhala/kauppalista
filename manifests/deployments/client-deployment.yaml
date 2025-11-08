@@ -18,6 +18,9 @@ spec:
       containers:
         - name: kauppalista-client
           image: ekelhala/kauppalista-client:latest
+          envFrom:
+            - secretRef:
+                name: client-env
           ports:
             - containerPort: 3000
           resources:

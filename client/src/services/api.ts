@@ -1,5 +1,4 @@
 import axios from "axios";
-import { DEV_API_URL, PROD_API_URL } from "../constants";
 
 type TokenGetter = () => string | undefined;
 
@@ -9,10 +8,8 @@ export const registerTokenGetter = (getter: TokenGetter) => {
   tokenGetter = getter;
 }
 
-const BASE_URL = import.meta.env.DEV ? DEV_API_URL : PROD_API_URL;
-
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: '/api',
   headers: {
     "Content-Type": "application/json",
   },

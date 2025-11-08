@@ -1,6 +1,6 @@
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 
-const ORIGIN = import.meta.env.DEV ? 'http://localhost:5173' : 'https://kauppalista.apps.k3s.kelhala.com';
+const ORIGIN = window.location.origin;
 const CLIENT_ID = import.meta.env.DEV ? 'kauppalista-client' : 'kauppalista-client-prod';
 
 const userManager = new UserManager({

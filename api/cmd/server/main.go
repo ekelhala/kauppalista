@@ -34,10 +34,6 @@ func main() {
 	}
 
 	log.Println("configuration loaded successfully.")
-	routerConfig := &api.RouterConfig{
-		CorsAllowedOrigins:   config.Cors.AllowOrigins,
-		CorsAllowCredentials: config.Cors.AllowCredentials,
-	}
 
 	err := godotenv.Load()
 	if err != nil {
@@ -70,7 +66,6 @@ func main() {
 	router := api.NewRouter(listService,
 		itemService,
 		kcService,
-		routerConfig,
 		authMiddleware)
 	srvAddr := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
 
