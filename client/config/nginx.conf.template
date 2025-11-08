@@ -45,9 +45,9 @@ http {
             add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
         }
 
-        # Fallback for SPA routes
+        # Fallback for SPA routes - preserve query params for OAuth callbacks
         location / {
-            try_files $uri $uri/ /index.html;
+            try_files $uri $uri/ /index.html?$args;
         }
 
         # Health endpoint for deployment
