@@ -45,24 +45,24 @@ http {
             add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
         }
 
-        # Fallback for SPA routes - preserve query params for OAuth callbacks
-        location / {
-            try_files $uri $uri/ /index.html?$args;
-        }
-
         # Health endpoint for deployment
         location /health {
             access_log off;
             return 200 "OK";
         }
 
-        # Proxy requests to the API server
+        # Proxy requests to the API server (must come before / location)
         location /api/ {
             proxy_pass ${API_HOST}/api/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        # Fallback for SPA routes - preserve query params for OAuth callbacks
+        location / {
+            try_files $uri $uri/ /index.html?$args;
         }
 
         # Serve a friendly fallback (optional)
