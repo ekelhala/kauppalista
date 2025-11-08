@@ -3,6 +3,9 @@ name: build-and-push
 on:
   push:
     branches: ["deploy"]
+  workflow_run:
+    workflows: ["weekly-deploy"]
+    types: ["completed"]
 
 jobs:
   build-api:
