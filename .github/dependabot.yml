@@ -8,12 +8,12 @@ updates:
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "client" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "daily"
     assignees: 
        - "ekelhala"
   - package-ecosystem: "gomod"
     directory: "api"
     schedule:
-       interval: "weekly"
+       interval: "daily"
     assignees: 
        - "ekelhala"
