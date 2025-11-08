@@ -16,4 +16,4 @@ COPY ./config/nginx.conf.template /etc/nginx/nginx.conf.template
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "envsubst '${API_HOST}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+CMD ["sh", "-c", "envsubst '${API_URL}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
