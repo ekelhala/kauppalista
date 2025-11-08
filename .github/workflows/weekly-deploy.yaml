@@ -1,0 +1,31 @@
+name: weekly-deploy
+
+on:
+  schedule:
+  # every Sunday at 3:00 PM UTC
+    - cron: '0 15 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  merge-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git identity
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      
+      - name: Merge main into deploy
+        run: |
+          git fetch origin
+          git checkout deploy
+          git merge origin/main --no-edit || echo "No changes to merge"
+          git push origin deploy
