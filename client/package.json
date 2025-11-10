@@ -13,7 +13,7 @@
     "@mantine/core": "^8.3.6",
     "@mantine/hooks": "^8.3.1",
     "@tabler/icons-react": "^3.35.0",
-    "@types/axios": "^0.9.36",
+    "@types/axios": "^0.14.4",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.13.2",
     "oidc-client-ts": "^3.3.0",
