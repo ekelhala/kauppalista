@@ -14,9 +14,14 @@ import type { Theme } from "../types/Theme";
 export interface ListsViewParams {
     setTheme: (theme: Theme) => void;
     theme: Theme;
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
 }
 
-export const ListsView = ({ setTheme, theme }: ListsViewParams) => {
+export const ListsView = ({ setTheme, 
+                            theme, 
+                            activeTab, 
+                            setActiveTab }: ListsViewParams) => {
   const navigate = useNavigate();
   const mantineTheme = useMantineTheme();
   const [lists, setLists] = useState<List[]>([]);
@@ -79,9 +84,11 @@ export const ListsView = ({ setTheme, theme }: ListsViewParams) => {
         <Loader />
         </div>
       ) : (
-        <Tabs defaultValue="pinned" 
-              keepMounted={false} 
-              variant="outline">
+        <Tabs
+              keepMounted={false}
+              variant="outline"
+              value={activeTab}
+              onChange={(value) => { setActiveTab(value ? value : 'pinned'); }}>
           <Tabs.List mb={"md"} style={{ display: 'flex',
                                         flexWrap: 'nowrap',
                                         overflowX: 'auto',
