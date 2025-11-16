@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import type { List } from "../types/List";
 import { deleteList, getLists, getSharedWithMeLists, getPinnedLists, pinList, unpinList } from "../services/listService";
 import { Container, Title, Text, Loader, Button, Tabs, useMantineTheme } from '@mantine/core';
-import { AddListDialog } from "../components/AddListDialog";
-import { ShareListDialog } from "../components/ShareListDialog";
-import ShoppingListItem from '../components/ShoppingListItem';
+import { AddListDialog } from "../dialogs/AddListDialog";
+import { ShareListDialog } from "../dialogs/ShareListDialog";
+import ShoppingLists from '../components/ShoppingLists';
 import { useNavigate } from 'react-router-dom';
 import { IconPlus } from '@tabler/icons-react';
 import { AccountMenu } from '../components/AccountMenu';
@@ -14,9 +14,14 @@ import type { Theme } from "../types/Theme";
 export interface ListsViewParams {
     setTheme: (theme: Theme) => void;
     theme: Theme;
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
 }
 
-export const ListsView = ({ setTheme, theme }: ListsViewParams) => {
+export const ListsView = ({ setTheme, 
+                            theme, 
+                            activeTab, 
+                            setActiveTab }: ListsViewParams) => {
   const navigate = useNavigate();
   const mantineTheme = useMantineTheme();
   const [lists, setLists] = useState<List[]>([]);
@@ -79,9 +84,11 @@ export const ListsView = ({ setTheme, theme }: ListsViewParams) => {
         <Loader />
         </div>
       ) : (
-        <Tabs defaultValue="pinned" 
-              keepMounted={false} 
-              variant="outline">
+        <Tabs
+              keepMounted={false}
+              variant="outline"
+              value={activeTab}
+              onChange={(value) => { setActiveTab(value ? value : 'pinned'); }}>
           <Tabs.List mb={"md"} style={{ display: 'flex',
                                         flexWrap: 'nowrap',
                                         overflowX: 'auto',
@@ -110,23 +117,15 @@ export const ListsView = ({ setTheme, theme }: ListsViewParams) => {
             {pinnedLists.length === 0 ? (
               <Text c="dimmed">Ei kiinnitettyjä listoja</Text>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {pinnedLists.map(list => (
-                  <ShoppingListItem
-                    key={list.id}
-                    list={list}
-                    onClick={(id: string) => navigate(`/lists/${id}`, { state: { name: list.name } })}
-                    onShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
-                    onDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
-                    isOwner={true}
-                    isPinned={true}
-                    onPinToggle={async (id: string, currentlyPinned: boolean) => {
-                      if (currentlyPinned) await unpinList(id); else await pinList(id);
-                      await getAndSetLists();
-                    }}
-                  />
-                ))}
-              </div>
+              <ShoppingLists
+                lists={pinnedLists}
+                onListSelect={(id: string) => navigate(`/lists/${id}`, { state: { name: pinnedLists.find(l => l.id === id)?.name } })}
+                onListShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
+                onListDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
+                isListPinned={() => true}
+                onListTogglePinned={async (id: string) => { await unpinList(id); await getAndSetLists(); }}
+                isListOwner={() => true}
+              />
             )}
           </Tabs.Panel>
 
@@ -134,23 +133,19 @@ export const ListsView = ({ setTheme, theme }: ListsViewParams) => {
             {lists.length === 0 ? (
               <Text c="dimmed">Ei listoja</Text>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {lists.map(list => (
-                  <ShoppingListItem
-                    key={list.id}
-                    list={list}
-                    onClick={(id: string) => navigate(`/lists/${id}`, { state: { name: list.name } })}
-                    onShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
-                    onDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
-                    isOwner={true}
-                    isPinned={pinnedLists.some(p => p.id === list.id)}
-                    onPinToggle={async (id: string, currentlyPinned: boolean) => {
-                      if (currentlyPinned) await unpinList(id); else await pinList(id);
-                      await getAndSetLists();
-                    }}
-                  />
-                ))}
-              </div>
+              <ShoppingLists
+                lists={lists}
+                onListSelect={(id: string) => navigate(`/lists/${id}`, { state: { name: lists.find(l => l.id === id)?.name } })}
+                onListShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
+                onListDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
+                isListPinned={(id: string) => pinnedLists.some(p => p.id === id)}
+                onListTogglePinned={async (id: string) => {
+                  const isPinned = pinnedLists.some(p => p.id === id);
+                  if (isPinned) await unpinList(id); else await pinList(id);
+                  await getAndSetLists();
+                }}
+                isListOwner={() => true}
+              />
             )}
           </Tabs.Panel>
 
@@ -158,22 +153,19 @@ export const ListsView = ({ setTheme, theme }: ListsViewParams) => {
             {sharedWithMeLists.length === 0 ? (
               <Text c="dimmed">Ei jaettuja listoja</Text>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {sharedWithMeLists.map(list => (
-                  <ShoppingListItem
-                    key={list.id}
-                    list={list}
-                    onClick={(id: string) => navigate(`/lists/${id}`, { state: { name: list.name } })}
-                    onShare={() => undefined}
-                    isOwner={false}
-                    isPinned={pinnedLists.some(p => p.id === list.id)}
-                    onPinToggle={async (id: string, currentlyPinned: boolean) => {
-                      if (currentlyPinned) await unpinList(id); else await pinList(id);
-                      await getAndSetLists();
-                    }}
-                  />
-                ))}
-              </div>
+              <ShoppingLists
+                lists={sharedWithMeLists}
+                onListSelect={(id: string) => navigate(`/lists/${id}`, { state: { name: sharedWithMeLists.find(l => l.id === id)?.name } })}
+                onListShare={() => undefined}
+                onListDelete={() => undefined}
+                isListPinned={(id: string) => pinnedLists.some(p => p.id === id)}
+                onListTogglePinned={async (id: string) => {
+                  const isPinned = pinnedLists.some(p => p.id === id);
+                  if (isPinned) await unpinList(id); else await pinList(id);
+                  await getAndSetLists();
+                }}
+                isListOwner={() => false}
+              />
             )}
           </Tabs.Panel>
         </Tabs>

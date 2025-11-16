@@ -15,6 +15,7 @@ const App = () => {
   const [theme, setTheme] = useState<Theme>('light');
   const { setColorScheme } = useMantineColorScheme();
   const [loadingTheme, setLoadingTheme] = useState(true);
+  const [activeTab, setActiveTab] = useState<string>('pinned');
 
   const auth = useAuth();
   // Track if we've already attempted a one-time silent signin during this
@@ -68,7 +69,13 @@ const App = () => {
           </Center>
         ) : auth.isAuthenticated ? (
           <Routes>
-            <Route path="/" element={<ListsView theme={theme} setTheme={setTheme} />} />
+            <Route 
+              path="/" 
+              element={<ListsView 
+                          theme={theme} 
+                          setTheme={setTheme} 
+                          activeTab={activeTab} 
+                          setActiveTab={setActiveTab} />} />
             <Route path="/lists/:id" element={<ListViewWrapper />} />
             {/* Route used only for silent renew iframe callback */}
             <Route path="/silent-renew" element={<SilentRenew />} />

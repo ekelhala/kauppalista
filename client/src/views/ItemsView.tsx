@@ -5,7 +5,7 @@ import { addItem, getItems, checkItem, deleteItem, clearSelectedItems } from '..
 import ItemRow from '../components/ItemRow';
 import { useNavigate } from 'react-router-dom';
 import { IconArrowLeft, IconPlus } from '@tabler/icons-react';
-import { AddItemDialog } from '../components/AddItemDialog';
+import { AddItemDialog } from '../dialogs/AddItemDialog';
 import { ListOptionsMenu } from '../components/ListOptionsMenu';
 
 type Props = {
