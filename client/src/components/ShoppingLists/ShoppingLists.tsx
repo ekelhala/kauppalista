@@ -22,6 +22,7 @@ export const ShoppingLists = ({ lists,
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {lists.map(list => (
             <ShoppingListItem
+                key={list.id}
                 list={list}
                 onClick={(id) => onListSelect(id)}
                 onDelete={(id) => onListDelete(id)}
