@@ -4,7 +4,7 @@ go 1.24.5
 
 require (
 	github.com/coreos/go-oidc v2.5.0+incompatible
-	github.com/go-chi/chi/v5 v5.2.3
+	github.com/go-chi/chi/v5 v5.2.4
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.17.2
 	gopkg.in/yaml.v3 v3.0.1
