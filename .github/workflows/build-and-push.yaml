@@ -41,9 +41,9 @@ jobs:
 
       - name: Validate client auth build variables
         env:
-          VITE_AUTH_AUTHORITY: ${{ vars.VITE_AUTH_AUTHORITY }}
-          VITE_AUTH_CLIENT_ID: ${{ vars.VITE_AUTH_CLIENT_ID }}
-          VITE_AUTH_AUDIENCE: ${{ vars.VITE_AUTH_AUDIENCE }}
+          VITE_AUTH_AUTHORITY: ${{ secrets.VITE_AUTH_AUTHORITY }}
+          VITE_AUTH_CLIENT_ID: ${{ secrets.VITE_AUTH_CLIENT_ID }}
+          VITE_AUTH_AUDIENCE: ${{ secrets.VITE_AUTH_AUDIENCE }}
         run: |
           set -e
           if [ -z "$VITE_AUTH_AUTHORITY" ]; then
@@ -78,10 +78,10 @@ jobs:
           context: ./client
           push: true
           build-args: |
-            VITE_AUTH_AUTHORITY=${{ vars.VITE_AUTH_AUTHORITY }}
-            VITE_AUTH_CLIENT_ID=${{ vars.VITE_AUTH_CLIENT_ID }}
-            VITE_AUTH_AUDIENCE=${{ vars.VITE_AUTH_AUDIENCE }}
-            VITE_AUTH_SCOPE=${{ vars.VITE_AUTH_SCOPE || 'openid profile email' }}
+            VITE_AUTH_AUTHORITY=${{ secrets.VITE_AUTH_AUTHORITY }}
+            VITE_AUTH_CLIENT_ID=${{ secrets.VITE_AUTH_CLIENT_ID }}
+            VITE_AUTH_AUDIENCE=${{ secrets.VITE_AUTH_AUDIENCE }}
+            VITE_AUTH_SCOPE=${{ secrets.VITE_AUTH_SCOPE || 'openid profile email' }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-client:${{ steps.generate-tags.outputs.TAG }},
             ${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-client:latest
