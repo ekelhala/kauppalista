@@ -15,11 +15,11 @@ type UserResponse struct {
 	Username string `json:"username"`
 }
 
-func SearchUsersHandler(kc *service.KeycloakService) http.HandlerFunc {
+func SearchUsersHandler(identitySvc *service.IdentityService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID := auth.UserIDFromContext(r.Context())
 		q := r.URL.Query().Get("q")
-		users, err := kc.SearchUsers(context.Background(), q)
+		users, err := identitySvc.SearchUsers(context.Background(), q)
 		if err != nil {
 			log.Println("failed to search users:", err)
 			w.WriteHeader(http.StatusInternalServerError)

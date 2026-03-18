@@ -54,18 +54,21 @@ func main() {
 	itemRepo := repository.NewItemRepository(db)
 	listService := service.NewListService(listRepo)
 	itemService := service.NewItemService(itemRepo)
-	kcService := service.NewKeycloakService(config.Keycloak.Issuer,
-		config.Keycloak.Realm, os.Getenv("KEYCLOAK_CLIENT_SECRET"),
-		config.Keycloak.ClientID)
+	identityService := service.NewIdentityService(
+		config.Auth0.Issuer,
+		config.Auth0.ManagementAudience,
+		config.Auth0.ManagementClientID,
+		os.Getenv("AUTH0_MANAGEMENT_CLIENT_SECRET"),
+	)
 	var authMiddleware func(http.Handler) http.Handler
-	if config.Keycloak.Issuer != "" && config.Keycloak.ClientID != "" {
-		authMiddleware = middleware.NewKeycloakMiddleware(config.Keycloak.Issuer, config.Keycloak.Realm, config.Keycloak.ClientID)
+	if config.Auth0.Issuer != "" && config.Auth0.APIAudience != "" {
+		authMiddleware = middleware.NewAuthMiddleware(config.Auth0.Issuer, config.Auth0.APIAudience)
 	} else {
-		log.Panic("keycloak configuration missing, cannot start the server!")
+		log.Panic("auth0 configuration missing, cannot start the server!")
 	}
 	router := api.NewRouter(listService,
 		itemService,
-		kcService,
+		identityService,
 		authMiddleware)
 	srvAddr := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
 

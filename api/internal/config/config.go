@@ -16,11 +16,12 @@ type Config struct {
 		Host string `yaml:"host" validate:"required"`
 		Port int    `yaml:"port" validate:"required"`
 	} `yaml:"redis"`
-	Keycloak struct {
-		Issuer   string `yaml:"issuer"`
-		ClientID string `yaml:"client_id"`
-		Realm    string `yaml:"realm"`
-	} `yaml:"keycloak"`
+	Auth0 struct {
+		Issuer             string `yaml:"issuer"`
+		APIAudience        string `yaml:"api_audience"`
+		ManagementAudience string `yaml:"management_audience"`
+		ManagementClientID string `yaml:"management_client_id"`
+	} `yaml:"auth0"`
 }
 
 func LoadConfig(configPath string) *Config {
@@ -34,6 +35,14 @@ func LoadConfig(configPath string) *Config {
 	}
 	if config.Server.Port == 0 || config.Server.Host == "" {
 		log.Fatalf("invalid server configuration: port and host must be set")
+		return nil
+	}
+	if config.Auth0.Issuer == "" || config.Auth0.APIAudience == "" {
+		log.Fatalf("invalid auth0 configuration: issuer and api_audience must be set")
+		return nil
+	}
+	if config.Auth0.ManagementAudience == "" || config.Auth0.ManagementClientID == "" {
+		log.Fatalf("invalid auth0 configuration: management_audience and management_client_id must be set")
 		return nil
 	}
 	return &config

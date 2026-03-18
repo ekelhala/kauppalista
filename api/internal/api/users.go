@@ -8,9 +8,9 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func usersRouter(kcSvc *service.KeycloakService) http.Handler {
+func usersRouter(identitySvc *service.IdentityService) http.Handler {
 	r := chi.NewRouter()
 	// GET /users?q=searchtext
-	r.Get("/", handlers.SearchUsersHandler(kcSvc))
+	r.Get("/", handlers.SearchUsersHandler(identitySvc))
 	return r
 }
