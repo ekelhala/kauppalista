@@ -12,7 +12,7 @@ ENV VITE_AUTH_SCOPE=${VITE_AUTH_SCOPE}
 ENV VITE_AUTH_AUDIENCE=${VITE_AUTH_AUDIENCE}
 
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY . .
 

@@ -14,7 +14,6 @@ FROM alpine:latest
 WORKDIR /app
 
 COPY --from=builder /app/bin/server ./bin/server
-COPY config.yaml ./config.yaml
 
 RUN addgroup -S api && \
     adduser -S -G api -h /app -s /bin/false api && \
