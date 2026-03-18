@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres
+    image: postgres:16-alpine
     environment:
       POSTGRES_USER: kauppalista
       POSTGRES_PASSWORD: kauppalista
@@ -9,6 +9,43 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kauppalista -d kauppalista"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PSQL_HOST: db
+      PSQL_USER: kauppalista
+      PSQL_PASSWORD: kauppalista
+      PSQL_DB: kauppalista
+      AUTH0_MANAGEMENT_CLIENT_SECRET: ${AUTH0_MANAGEMENT_CLIENT_SECRET}
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./api/config.yaml:/app/config.yaml:ro
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_AUTH_AUTHORITY: ${VITE_AUTH_AUTHORITY}
+        VITE_AUTH_CLIENT_ID: ${VITE_AUTH_CLIENT_ID}
+        VITE_AUTH_SCOPE: ${VITE_AUTH_SCOPE:-openid profile email}
+        VITE_AUTH_AUDIENCE: ${VITE_AUTH_AUDIENCE}
+    depends_on:
+      - api
+    environment:
+      API_URL: http://api:9000
+    ports:
+      - "3000:3000"
 
 volumes:
   db_data:

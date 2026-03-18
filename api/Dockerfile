@@ -14,12 +14,13 @@ FROM alpine:latest
 WORKDIR /app
 
 COPY --from=builder /app/bin/server ./bin/server
+COPY config.yaml ./config.yaml
 
 RUN addgroup -S api && \
     adduser -S -G api -h /app -s /bin/false api && \
     chown -R api:api /app
 USER api
 
-EXPOSE 8080
+EXPOSE 9000
 
-CMD ["./bin/server"]
+CMD ["./bin/server", "-config", "./config.yaml"]

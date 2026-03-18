@@ -1,14 +1,15 @@
 cors:
   allowOrigins:
-    - "http://localhost:5173"
+    - "http://localhost:3000"
   allowCredentials: true
 server:
   port: 9000
-  host: 127.0.0.1
+  host: 0.0.0.0
 redis:
   host: localhost
   port: 6379
-keycloak:
-  issuer: "https://keycloak.kelhala.com"
-  client_id: "kauppalista-api"
-  realm: "kauppalista"
+auth0:
+  issuer: "https://your-tenant.auth0.com/"
+  api_audience: "kauppalista-api"
+  management_audience: "https://your-tenant.auth0.com/api/v2/"
+  management_client_id: "your-management-client-id"
