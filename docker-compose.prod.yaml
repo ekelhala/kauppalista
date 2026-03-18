@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kauppalista
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: kauppalista
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kauppalista -d kauppalista"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: ekelhala/kauppalista-api:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PSQL_HOST: db
+      PSQL_USER: kauppalista
+      PSQL_PASSWORD: ${POSTGRES_PASSWORD}
+      PSQL_DB: kauppalista
+      AUTH0_MANAGEMENT_CLIENT_SECRET: ${AUTH0_MANAGEMENT_CLIENT_SECRET}
+    volumes:
+      - ./api/config.yaml:/app/config.yaml:ro
+
+  client:
+    image: ekelhala/kauppalista-client:latest
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      API_URL: http://api:9000
+    ports:
+      - "3000:3000"
+
+volumes:
+  db_data:
