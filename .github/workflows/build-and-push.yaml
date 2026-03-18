@@ -39,6 +39,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Validate client auth build variables
+        env:
+          VITE_AUTH_AUTHORITY: ${{ vars.VITE_AUTH_AUTHORITY }}
+          VITE_AUTH_CLIENT_ID: ${{ vars.VITE_AUTH_CLIENT_ID }}
+          VITE_AUTH_AUDIENCE: ${{ vars.VITE_AUTH_AUDIENCE }}
+        run: |
+          set -e
+          if [ -z "$VITE_AUTH_AUTHORITY" ]; then
+            echo "Missing repository variable: VITE_AUTH_AUTHORITY"
+            exit 1
+          fi
+          if [ -z "$VITE_AUTH_CLIENT_ID" ]; then
+            echo "Missing repository variable: VITE_AUTH_CLIENT_ID"
+            exit 1
+          fi
+          if [ -z "$VITE_AUTH_AUDIENCE" ]; then
+            echo "Missing repository variable: VITE_AUTH_AUDIENCE"
+            exit 1
+          fi
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -57,6 +77,11 @@ jobs:
         with:
           context: ./client
           push: true
+          build-args: |
+            VITE_AUTH_AUTHORITY=${{ vars.VITE_AUTH_AUTHORITY }}
+            VITE_AUTH_CLIENT_ID=${{ vars.VITE_AUTH_CLIENT_ID }}
+            VITE_AUTH_AUDIENCE=${{ vars.VITE_AUTH_AUDIENCE }}
+            VITE_AUTH_SCOPE=${{ vars.VITE_AUTH_SCOPE || 'openid profile email' }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-client:${{ steps.generate-tags.outputs.TAG }},
             ${{ secrets.DOCKERHUB_USERNAME }}/kauppalista-client:latest
