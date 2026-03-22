@@ -1,0 +1,20 @@
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+[data-mantine-color-scheme='light'] body {
+  background-color: #f4f1e8;
+  color: #1b4332;
+}
+
+[data-mantine-color-scheme='dark'] body {
+  background-color: #112f26;
+  color: #e9f5ee;
+}

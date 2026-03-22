@@ -31,7 +31,7 @@ export const AccountMenu = ({ onThemeToggle, theme }: AccountMenuProps) => {
                 <div style={{ padding: '8px 12px', minWidth: 200 }}>
                     <div style={{ fontWeight: 700 }}>{(displayName || username) || 'Tuntematon käyttäjä'}</div>
                     {username ? (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, color: '#666', fontSize: 12 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, color: 'var(--mantine-color-dimmed)', fontSize: 12 }}>
                             <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{username}</div>
                             <div>
                                 {/* Copy username */}

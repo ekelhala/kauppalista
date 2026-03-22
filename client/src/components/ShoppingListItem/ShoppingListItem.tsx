@@ -33,7 +33,7 @@ export const ShoppingListItem = ({ list,
           <Text style={{ fontWeight: 700 }}>{list.name}</Text>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Badge color="cyan" variant="light">{list.items.length} tuotetta</Badge>
+          <Badge color="brand" variant="light">{list.items.length} tuotetta</Badge>
           <ListItemMenu
             list={list}
             onShare={onShare}
