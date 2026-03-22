@@ -5,7 +5,7 @@ import { Container, Title, Text, Loader, Button, Tabs, useMantineTheme } from '@
 import { AddListDialog } from "../dialogs/AddListDialog";
 import { ShareListDialog } from "../dialogs/ShareListDialog";
 import ShoppingLists from '../components/ShoppingLists';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { IconPlus } from '@tabler/icons-react';
 import { AccountMenu } from '../components/AccountMenu';
 import { useAuth } from "react-oidc-context";
@@ -23,6 +23,7 @@ export const ListsView = ({ setTheme,
                             activeTab, 
                             setActiveTab }: ListsViewParams) => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const mantineTheme = useMantineTheme();
   const [lists, setLists] = useState<List[]>([]);
   const [pinnedLists, setPinnedLists] = useState<List[]>([]);
@@ -58,6 +59,13 @@ export const ListsView = ({ setTheme,
     }
   }, [auth.isAuthenticated, auth.isLoading]);
 
+  useEffect(() => {
+    const requestedTab = searchParams.get('tab');
+    if (requestedTab === 'pinned' || requestedTab === 'my' || requestedTab === 'shared') {
+      setActiveTab(requestedTab);
+    }
+  }, [searchParams, setActiveTab]);
+
   return (
     <Container size="sm" py="xl">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -88,7 +96,13 @@ export const ListsView = ({ setTheme,
               keepMounted={false}
               variant="outline"
               value={activeTab}
-              onChange={(value) => { setActiveTab(value ? value : 'pinned'); }}>
+              onChange={(value) => {
+                const nextTab = value ? value : 'pinned';
+                setActiveTab(nextTab);
+                const params = new URLSearchParams(searchParams);
+                params.set('tab', nextTab);
+                setSearchParams(params, { replace: true });
+              }}>
           <Tabs.List mb={"md"} style={{ display: 'flex',
                                         flexWrap: 'nowrap',
                                         overflowX: 'auto',

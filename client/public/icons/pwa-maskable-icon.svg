@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Kauppalista maskable icon">
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="#1b4332"/>
+  <path d="M106 188h52l22 140h146l30-96H166" fill="none" stroke="#f4f1e8" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="210" cy="372" r="20" fill="#f4f1e8"/>
+  <circle cx="302" cy="372" r="20" fill="#f4f1e8"/>
+</svg>
