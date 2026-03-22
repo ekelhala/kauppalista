@@ -1,5 +1,5 @@
 import type { List } from '../../types/List';
-import { Card, Badge, Text } from '@mantine/core';
+import { Card, Badge, Text, useMantineColorScheme } from '@mantine/core';
 import { ListItemMenu } from './ListItemMenu';
 
 type Props = {
@@ -18,6 +18,7 @@ export const ShoppingListItem = ({ list,
                                     onDelete, 
                                     onPinToggle, 
                                     isPinned = false }: Props) => {
+  const { colorScheme } = useMantineColorScheme();
 
   return (
     <Card
@@ -25,7 +26,10 @@ export const ShoppingListItem = ({ list,
       shadow="sm"
       radius="md"
       withBorder
-      style={{ cursor: onClick ? 'pointer' : 'default', backgroundColor: 'var(--mantine-color-brand-0)' }}
+      style={{
+        cursor: onClick ? 'pointer' : 'default',
+        backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-6)' : 'var(--mantine-color-brand-2)',
+      }}
       onClick={() => onClick?.(list.id)}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

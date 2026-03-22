@@ -144,7 +144,8 @@ export const ListView = ({ listId, listName }: Props) => {
           paddingBottom: 8 
         }}>
           <Button 
-            variant='light' 
+            color='brand'
+            variant='filled' 
             size='xs' 
             fullWidth
             onClick={() => setDialogOpened(true)}>

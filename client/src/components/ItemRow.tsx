@@ -1,5 +1,5 @@
 import type { Item } from '../types/Item';
-import { Checkbox, Text, Card, ActionIcon, Menu } from '@mantine/core';
+import { Checkbox, Text, Card, ActionIcon, Menu, useMantineColorScheme } from '@mantine/core';
 import { IconTrash, IconPlus, IconMinus, IconDotsVertical } from '@tabler/icons-react';
 import { useState } from 'react';
 import { decreaseItemQuantity, increaseItemQuantity } from '../services/itemService';
@@ -13,6 +13,7 @@ type Props = {
 export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
   const [quantity, setQuantity] = useState<number>(item.quantity);
   const [menuOpened, setMenuOpened] = useState(false);
+  const { colorScheme } = useMantineColorScheme();
 
   const dec = () => {
     setQuantity(q => Math.max(1, q - 1));
@@ -24,15 +25,16 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
 }
 
   const getCardStyles = () => {
-    const baseColor = 'var(--mantine-color-white)';
-    const checkedColor = 'var(--mantine-color-brand-0)';
+    const isDark = colorScheme === 'dark';
+    const baseColor = isDark ? 'var(--mantine-color-dark-6)' : 'var(--mantine-color-brand-2)';
+    const checkedColor = isDark ? 'var(--mantine-color-dark-5)' : 'var(--mantine-color-brand-3)';
     
     return {
       width: '100%',
       padding: 8,
       marginBottom: 4,
       backgroundColor: item.checked ? checkedColor : baseColor,
-      opacity: item.checked ? 0.6 : 1
+      opacity: item.checked ? 0.8 : 1
     };
   };
 
