@@ -25,7 +25,7 @@ export const ShoppingListItem = ({ list,
       shadow="sm"
       radius="md"
       withBorder
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
+      style={{ cursor: onClick ? 'pointer' : 'default', backgroundColor: 'var(--mantine-color-brand-0)' }}
       onClick={() => onClick?.(list.id)}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

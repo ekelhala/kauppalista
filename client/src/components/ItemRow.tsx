@@ -1,5 +1,5 @@
 import type { Item } from '../types/Item';
-import { Checkbox, Text, Card, ActionIcon, Menu, useMantineColorScheme } from '@mantine/core';
+import { Checkbox, Text, Card, ActionIcon, Menu } from '@mantine/core';
 import { IconTrash, IconPlus, IconMinus, IconDotsVertical } from '@tabler/icons-react';
 import { useState } from 'react';
 import { decreaseItemQuantity, increaseItemQuantity } from '../services/itemService';
@@ -13,7 +13,6 @@ type Props = {
 export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
   const [quantity, setQuantity] = useState<number>(item.quantity);
   const [menuOpened, setMenuOpened] = useState(false);
-  const { colorScheme } = useMantineColorScheme();
 
   const dec = () => {
     setQuantity(q => Math.max(1, q - 1));
@@ -25,9 +24,8 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
 }
 
   const getCardStyles = () => {
-    const isDark = colorScheme === 'dark';
-    const baseColor = isDark ? 'var(--mantine-color-dark-6)' : 'var(--mantine-color-white)';
-    const checkedColor = isDark ? 'var(--mantine-color-dark-5)' : 'var(--mantine-color-gray-0)';
+    const baseColor = 'var(--mantine-color-white)';
+    const checkedColor = 'var(--mantine-color-brand-0)';
     
     return {
       width: '100%',
