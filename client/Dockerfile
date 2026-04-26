@@ -1,4 +1,4 @@
-FROM node:24-alpine AS builder
+FROM oven/bun:1-alpine AS builder
 
 WORKDIR /app
 
@@ -12,11 +12,11 @@ ENV VITE_AUTH_SCOPE=${VITE_AUTH_SCOPE}
 ENV VITE_AUTH_AUDIENCE=${VITE_AUTH_AUDIENCE}
 
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
+RUN bun install
 
 COPY . .
 
-RUN npm run build
+RUN bun run build
 
 FROM nginx:alpine-slim
 
