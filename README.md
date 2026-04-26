@@ -14,8 +14,12 @@ Kauppalista is a full-stack shopping list application (API + single-page client)
 	- Reusable components (dialogs, account menu, item rows)
 	- Client-side services for calling the API
 - Containerization & Deployment
-	- Dockerfiles for API and client
+	- Dockerfiles for API and client (client built with Bun)
 	- Docker Compose stack for database, API, and client
+- Documentation
+	- [docs/](docs/) — Project documentation index
+	- [Local Development](docs/getting-started/LOCAL_DEV.md) — Setup and run locally
+	- [Deployment](docs/deployment/DEPLOYMENT.md) — Production deployment guide
 
 ## Architecture (high level)
 
@@ -38,7 +42,7 @@ Kauppalista is a full-stack shopping list application (API + single-page client)
 
 ## Quickstart - Docker Compose
 
-Prerequisites: Docker Engine + Docker Compose plugin.
+Prerequisites: [Bun](https://bun.sh/) ≥ 1.2.0, Docker Engine + Docker Compose plugin.
 
 1. Copy environment template and fill Auth0 values:
 
