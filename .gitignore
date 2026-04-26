@@ -1,2 +1,5 @@
 .env
 api/bin/
+
+# Coding agents
+plans/
