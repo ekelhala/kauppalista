@@ -1,5 +1,5 @@
 import type { List } from '../../types/List';
-import { Card, Badge, Text, useMantineColorScheme } from '@mantine/core';
+import { Card, CardActionArea, Typography, Chip, useTheme } from '@mui/material';
 import { ListItemMenu } from './ListItemMenu';
 
 type Props = {
@@ -18,34 +18,35 @@ export const ShoppingListItem = ({ list,
                                     onDelete, 
                                     onPinToggle, 
                                     isPinned = false }: Props) => {
-  const { colorScheme } = useMantineColorScheme();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const bgColor = isDark ? theme.palette.grey[700] : 'var(--mui-palette-primary-light, #e3f2fd)';
 
   return (
     <Card
       key={list.id}
-      shadow="sm"
-      radius="md"
-      withBorder
-      style={{
+      variant="outlined"
+      sx={{
         cursor: onClick ? 'pointer' : 'default',
-        backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-6)' : 'var(--mantine-color-brand-2)',
+        backgroundColor: bgColor,
       }}
-      onClick={() => onClick?.(list.id)}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <Text style={{ fontWeight: 700 }}>{list.name}</Text>
+      <CardActionArea onClick={() => onClick?.(list.id)}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{list.name}</Typography>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Chip size="small" color="primary" variant="outlined" label={`${list.items.length} tuotetta`} />
+            <ListItemMenu
+              list={list}
+              onShare={onShare}
+              onDelete={onDelete}
+              onPinToggle={onPinToggle}
+              isPinned={isPinned} />
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Badge color="brand" variant="light">{list.items.length} tuotetta</Badge>
-          <ListItemMenu
-            list={list}
-            onShare={onShare}
-            onDelete={onDelete}
-            onPinToggle={onPinToggle}
-            isPinned={isPinned} />
-        </div>
-      </div>
+      </CardActionArea>
     </Card>
   );
 };

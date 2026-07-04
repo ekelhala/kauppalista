@@ -1,5 +1,5 @@
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { useState } from "react";
-import { TextInput, Button, Modal, Group } from "@mantine/core";
 
 export type AddItemDialogProps = {
     opened: boolean;
@@ -23,18 +23,24 @@ export const AddItemDialog = ({ opened, onClose, onItemAdded }: AddItemDialogPro
     }
 
     return (
-    <Modal opened={opened} onClose={handleClose} title="Lisää tuote">
-        <TextInput
-            value={itemName}
-            onChange={(e) => setItemName(e.currentTarget.value)}
-            placeholder="Tuotteen nimi"
-        />
-        <Group justify="flex-end" mt="md">
-            <Button variant="default" onClick={handleClose}>Peruuta</Button>
-            <Button onClick={handleAddItem} disabled={!itemName.trim()}>
-                Lisää
-            </Button>
-        </Group>
-    </Modal>
-  )
+        <Dialog open={opened} onClose={handleClose}>
+            <DialogTitle>Lisää tuote</DialogTitle>
+            <DialogContent>
+                <TextField
+                    fullWidth
+                    autoFocus
+                    value={itemName}
+                    onChange={(e) => setItemName(e.currentTarget.value)}
+                    placeholder="Tuotteen nimi"
+                    sx={{ mt: 1 }}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button variant="outlined" onClick={handleClose}>Peruuta</Button>
+                <Button onClick={handleAddItem} disabled={!itemName.trim()}>
+                    Lisää
+                </Button>
+            </DialogActions>
+        </Dialog>
+    )
 }

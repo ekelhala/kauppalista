@@ -1,4 +1,4 @@
-import { Button, Modal, TextInput } from "@mantine/core";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { useState } from "react";
 import { createList } from "../services/listService";
 
@@ -25,20 +25,22 @@ export const AddListDialog = ({opened, onClose, onListCreated}: AddListDialogPro
     }
 
     return (
-        <Modal opened={opened} onClose={() => {setNewListName(''); onClose();}} title="Luo uusi lista">
-            <TextInput
-                placeholder="Listan nimi"
-                value={newListName}
-                onChange={(e) => setNewListName(e.currentTarget.value)}
-                mb="md"
-            />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-            <Button variant="default" onClick={() => {setNewListName(''); onClose();}}>Peruuta</Button>
-            <Button
-            onClick={handleCreate}
-            disabled={!newListName.trim()}
-            >Tallenna</Button>
-        </div>
-        </Modal>
+        <Dialog open={opened} onClose={() => {setNewListName(''); onClose();}}>
+            <DialogTitle>Luo uusi lista</DialogTitle>
+            <DialogContent>
+                <TextField
+                    fullWidth
+                    autoFocus
+                    placeholder="Listan nimi"
+                    value={newListName}
+                    onChange={(e) => setNewListName(e.currentTarget.value)}
+                    sx={{ mt: 1 }}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button variant="outlined" onClick={() => {setNewListName(''); onClose();}}>Peruuta</Button>
+                <Button onClick={handleCreate} disabled={!newListName.trim()}>Tallenna</Button>
+            </DialogActions>
+        </Dialog>
     )
 }

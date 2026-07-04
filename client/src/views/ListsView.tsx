@@ -77,7 +77,7 @@ export const ListsView = ({ toggle,
           <div>
             <AccountMenu 
               onThemeToggle={handleThemeToggle} 
-              theme={mode} 
+              mode={mode} 
             />
           </div>
         </div>
