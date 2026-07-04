@@ -1,6 +1,7 @@
 import type { List } from '../../types/List';
 import { List as MuiList, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Chip } from '@mui/material';
 import { PinEnd } from '@mui/icons-material';
+import { useState } from 'react';
 import { ListItemMenu } from './ListItemMenu';
 
 type Props = {
@@ -20,6 +21,7 @@ export const ShoppingListItem = ({ list,
                                     onPinToggle,
                                     isPinned = false }: Props) => {
   const initial = (list.name || '?').charAt(0).toUpperCase();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <MuiList dense={false}>
@@ -50,10 +52,11 @@ export const ShoppingListItem = ({ list,
               onShare={onShare}
               onDelete={onDelete}
               onPinToggle={onPinToggle}
+              onOpenChange={setMenuOpen}
               isPinned={isPinned} />
           </div>
         }
-        onClick={() => onClick?.(list.id)}
+        onClick={() => { if (menuOpen) return; onClick?.(list.id); }}
       >
         <ListItemAvatar>
           <Chip
