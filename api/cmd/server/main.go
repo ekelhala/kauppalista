@@ -39,13 +39,7 @@ func main() {
 	if err != nil {
 		log.Println("no .env file found! proceeding with environment variables")
 	}
-	dbConn := fmt.Sprintf("host=%s user=%s dbname=%s password=%s",
-		os.Getenv("PSQL_HOST"),
-		os.Getenv("PSQL_USER"),
-		os.Getenv("PSQL_DB"),
-		os.Getenv("PSQL_PASSWORD"),
-	)
-	db, err := gorm.Open(postgres.Open(dbConn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{})
 	if err != nil {
 		log.Fatal("failed to connect database")
 	}
