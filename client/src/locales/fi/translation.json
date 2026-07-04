@@ -51,7 +51,8 @@
     "unknown": "Tuntematon käyttäjä",
     "section": {
       "settings": "Asetukset",
-      "userActions": "Käyttäjätoiminnot"
+      "userActions": "Käyttäjätoiminnot",
+      "language": "Kieli"
     },
     "theme": {
       "light": "Vaalea tila",
@@ -60,7 +61,8 @@
     "logout": "Kirjaudu ulos",
     "aria": {
       "openMenu": "Avaa käyttäjävalikko",
-      "copyUsername": "Kopioi käyttäjätunnus"
+      "copyUsername": "Kopioi käyttäjätunnus",
+      "languageSwitch": "Vaihda kieltä"
     }
   },
   "dialogs": {

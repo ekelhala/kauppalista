@@ -1,4 +1,4 @@
-import { Avatar, IconButton, Menu, MenuItem, Divider, ListSubheader, Box, Typography } from "@mui/material";
+import { Avatar, IconButton, Menu, MenuItem, Divider, ListSubheader, Box, Typography, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import { Logout, ContentCopy, Check, DarkMode, LightMode } from '@mui/icons-material';
@@ -12,7 +12,7 @@ export interface AccountMenuProps {
 
 export const AccountMenu = ({ onThemeToggle, mode }: AccountMenuProps) => {
     const auth = useAuth();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const displayNameRaw = auth.user?.profile?.name || auth.user?.profile?.given_name || '';
     const usernameRaw = auth.user?.profile?.preferred_username || auth.user?.profile?.username || auth.user?.profile?.email || '';
     const displayName = String(displayNameRaw);
@@ -68,6 +68,21 @@ export const AccountMenu = ({ onThemeToggle, mode }: AccountMenuProps) => {
                         )}
                     </Box>
                 </MenuItem>
+                <Divider />
+                <ListSubheader>{t('account.section.language')}</ListSubheader>
+                <Box sx={{ px: 2, py: 0.5 }}>
+                    <ToggleButtonGroup
+                        exclusive
+                        value={i18n.language}
+                        onChange={(_, lng) => lng && i18n.changeLanguage(lng)}
+                        size="small"
+                        aria-label={t('account.aria.languageSwitch')}
+                        fullWidth
+                    >
+                        <ToggleButton value="fi">Suomi</ToggleButton>
+                        <ToggleButton value="en">English</ToggleButton>
+                    </ToggleButtonGroup>
+                </Box>
                 <Divider />
                 <ListSubheader>{t('account.section.userActions')}</ListSubheader>
                 <MenuItem onClick={async () => {

@@ -52,7 +52,8 @@
     "unknown": "Unknown user",
     "section": {
       "settings": "Settings",
-      "userActions": "User Actions"
+      "userActions": "User Actions",
+      "language": "Language"
     },
     "theme": {
       "light": "Light mode",
@@ -61,7 +62,8 @@
     "logout": "Sign out",
     "aria": {
       "openMenu": "Open account menu",
-      "copyUsername": "Copy username"
+      "copyUsername": "Copy username",
+      "languageSwitch": "Change language"
     }
   },
   "dialogs": {
