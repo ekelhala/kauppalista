@@ -2,10 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 import App from './App.tsx'
-import '@mantine/core/styles.css';
 import './theme.css';
 import {AuthProvider} from 'react-oidc-context'
-import { MantineProvider } from '@mantine/core';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -47,24 +45,22 @@ const updateSW = registerSW({
 
 void updateSW;
 
-function AppWrapper() {
+function MuiApp() {
   const { mode } = useColorMode();
   return (
-    <MantineProvider>
-      <ThemeProvider theme={getTheme(mode)}>
-        <CssBaseline />
-        <AuthProvider userManager={userManager}>
-          <App />
-        </AuthProvider>
-      </ThemeProvider>
-    </MantineProvider>
+    <ThemeProvider theme={getTheme(mode)}>
+      <CssBaseline />
+      <AuthProvider userManager={userManager}>
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ColorModeProvider>
-      <AppWrapper />
+      <MuiApp />
     </ColorModeProvider>
   </StrictMode>,
 )

@@ -1,4 +1,4 @@
-import { Container, Center, Loader } from '@mantine/core';
+import { Box, Container, CircularProgress } from '@mui/material';
 import { BrowserRouter, Routes, Route, useParams, useLocation } from 'react-router-dom';
 import { ListsView } from './views/ListsView';
 import { ListView } from './views/ItemsView';
@@ -40,11 +40,11 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <Container size="sm" py="xl">
+      <Container maxWidth="sm" sx={{ py: 4 }}>
         {auth.isLoading ? (
-          <Center style={{ height: '50vh', flexDirection: 'column' }}>
-            <Loader />
-          </Center>
+          <Box sx={{ height: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
         ) : auth.isAuthenticated ? (
           <Routes>
             <Route 

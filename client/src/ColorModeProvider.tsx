@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { Theme } from './types/Theme';
-import { useMantineColorScheme } from '@mantine/core';
 
 interface ColorModeContextValue {
   mode: Theme;
@@ -20,8 +19,6 @@ export function ColorModeProvider({ children }: { children: ReactNode }) {
     return saved === 'light' || saved === 'dark' ? saved : 'light';
   });
 
-  const { setColorScheme } = useMantineColorScheme();
-
   const setMode = (newMode: Theme) => {
     setModeState(newMode);
     localStorage.setItem('theme', newMode);
@@ -30,10 +27,6 @@ export function ColorModeProvider({ children }: { children: ReactNode }) {
   const toggle = () => {
     setMode(mode === 'light' ? 'dark' : 'light');
   };
-
-  useEffect(() => {
-    setColorScheme(mode === 'dark' ? 'dark' : 'light');
-  }, [mode, setColorScheme]);
 
   return (
     <ColorModeContext.Provider value={{ mode, toggle, setMode }}>
