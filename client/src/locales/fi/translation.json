@@ -43,7 +43,8 @@
     "notFound": "404: listaa ei löydy",
     "aria": {
       "openMenu": "Avaa valikko",
-      "addItem": "Lisää tuote"
+      "addItem": "Lisää tuote",
+      "openNav": "Avaa navigaatio"
     }
   },
   "account": {

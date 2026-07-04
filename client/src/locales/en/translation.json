@@ -44,7 +44,8 @@
     "notFound": "404: list not found",
     "aria": {
       "openMenu": "Open menu",
-      "addItem": "Add item"
+      "addItem": "Add item",
+      "openNav": "Open navigation"
     }
   },
   "account": {

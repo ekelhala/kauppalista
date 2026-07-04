@@ -1,4 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { createList } from "../services/listService";
 
@@ -9,6 +10,7 @@ export type AddListDialogProps = {
 }
 
 export const AddListDialog = ({opened, onClose, onListCreated}: AddListDialogProps) => {
+    const { t } = useTranslation();
 
     const [newListName, setNewListName] = useState('');
 
@@ -26,20 +28,20 @@ export const AddListDialog = ({opened, onClose, onListCreated}: AddListDialogPro
 
     return (
         <Dialog open={opened} onClose={() => {setNewListName(''); onClose();}}>
-            <DialogTitle>Luo uusi lista</DialogTitle>
+            <DialogTitle>{t('dialogs.createList.title')}</DialogTitle>
             <DialogContent>
                 <TextField
                     fullWidth
                     autoFocus
-                    placeholder="Listan nimi"
+                    placeholder={t('dialogs.createList.namePlaceholder')}
                     value={newListName}
                     onChange={(e) => setNewListName(e.currentTarget.value)}
                     sx={{ mt: 1 }}
                 />
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" onClick={() => {setNewListName(''); onClose();}}>Peruuta</Button>
-                <Button onClick={handleCreate} disabled={!newListName.trim()}>Tallenna</Button>
+                <Button variant="outlined" onClick={() => {setNewListName(''); onClose();}}>{t('common.actions.cancel')}</Button>
+                <Button onClick={handleCreate} disabled={!newListName.trim()}>{t('common.actions.save')}</Button>
             </DialogActions>
         </Dialog>
     )
