@@ -32,6 +32,29 @@ const baseOptions: ThemeOptions = {
       defaultProps: {
         disableElevation: true,
       },
+      styleOverrides: {
+        root: {
+          borderRadius: 20,
+        },
+      },
+    },
+    MuiCard: {
+      defaultProps: {
+        elevation: 0,
+        variant: 'outlined',
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: 16,
+        },
+      },
     },
     MuiCssBaseline: {
       styleOverrides: {
