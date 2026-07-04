@@ -1,36 +1,29 @@
 services:
-  db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: kauppalista
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: kauppalista
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kauppalista -d kauppalista"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   api:
-    image: ekelhala/kauppalista-api:latest
+    build:
+      context: ./api
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
-      PSQL_HOST: db
-      PSQL_USER: kauppalista
-      PSQL_PASSWORD: ${POSTGRES_PASSWORD}
-      PSQL_DB: kauppalista
+      SERVER_HOST: ${SERVER_HOST:-0.0.0.0}
+      SERVER_PORT: ${SERVER_PORT:-9000}
+      DATABASE_URL: ${DATABASE_URL}
+      AUTH0_ISSUER: ${AUTH0_ISSUER}
+      AUTH0_API_AUDIENCE: ${AUTH0_API_AUDIENCE}
+      AUTH0_MANAGEMENT_AUDIENCE: ${AUTH0_MANAGEMENT_AUDIENCE}
+      AUTH0_MANAGEMENT_CLIENT_ID: ${AUTH0_MANAGEMENT_CLIENT_ID}
       AUTH0_MANAGEMENT_CLIENT_SECRET: ${AUTH0_MANAGEMENT_CLIENT_SECRET}
-    volumes:
-      - ./api/config.yaml:/app/config.yaml:ro
+    networks:
+      - default
+      - dokploy-network
 
   client:
-    image: ekelhala/kauppalista-client:latest
+    build:
+      context: ./client
+      args:
+        VITE_AUTH_AUTHORITY: ${VITE_AUTH_AUTHORITY}
+        VITE_AUTH_CLIENT_ID: ${VITE_AUTH_CLIENT_ID}
+        VITE_AUTH_SCOPE: ${VITE_AUTH_SCOPE:-openid profile email}
+        VITE_AUTH_AUDIENCE: ${VITE_AUTH_AUDIENCE}
     restart: unless-stopped
     depends_on:
       - api
@@ -39,5 +32,6 @@ services:
     ports:
       - "3000:3000"
 
-volumes:
-  db_data:
+networks:
+  dokploy-network:
+    external: true
