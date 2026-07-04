@@ -1,0 +1,94 @@
+{
+  "auth": {
+    "appName": "Kauppalista",
+    "login": "Kirjaudu"
+  },
+  "lists": {
+    "title": "Listat",
+    "actions": {
+      "new": "Uusi"
+    },
+    "tabs": {
+      "pinned": "Kiinnitetyt",
+      "my": "Omat",
+      "shared": "Jaettu kanssani"
+    },
+    "empty": {
+      "pinned": "Ei kiinnitettyjä listoja",
+      "my": "Ei listoja",
+      "shared": "Ei jaettuja listoja"
+    },
+    "badge": {
+      "itemCount": "{{count}} tuotetta"
+    },
+    "menu": {
+      "share": "Jaa",
+      "pin": "Kiinnitä",
+      "unpin": "Poista kiinnitys",
+      "delete": "Poista"
+    },
+    "navTitle": "Näkymät"
+  },
+  "items": {
+    "actions": {
+      "back": "Takaisin",
+      "addItem": "Lisää tuote"
+    },
+    "menu": {
+      "increase": "Lisää",
+      "decrease": "Vähennä",
+      "delete": "Poista",
+      "clearSelected": "Tyhjennä valitut"
+    },
+    "notFound": "404: listaa ei löydy",
+    "aria": {
+      "openMenu": "Avaa valikko",
+      "addItem": "Lisää tuote",
+      "openNav": "Avaa navigaatio"
+    }
+  },
+  "account": {
+    "unknown": "Tuntematon käyttäjä",
+    "section": {
+      "settings": "Asetukset",
+      "userActions": "Käyttäjätoiminnot",
+      "language": "Kieli"
+    },
+    "theme": {
+      "light": "Vaalea tila",
+      "dark": "Tumma tila"
+    },
+    "logout": "Kirjaudu ulos",
+    "aria": {
+      "openMenu": "Avaa käyttäjävalikko",
+      "copyUsername": "Kopioi käyttäjätunnus",
+      "languageSwitch": "Vaihda kieltä"
+    }
+  },
+  "dialogs": {
+    "createList": {
+      "title": "Luo uusi lista",
+      "namePlaceholder": "Listan nimi"
+    },
+    "addItem": {
+      "title": "Lisää tuote",
+      "namePlaceholder": "Tuotteen nimi"
+    },
+    "shareList": {
+      "title": "Jaa lista",
+      "searchPrompt": "Etsi käyttäjää käyttäjätunnuksella",
+      "searchPlaceholder": "Hae käyttäjää",
+      "noResults": "Ei hakutuloksia",
+      "select": "Valitse",
+      "selected": "Valittu"
+    }
+  },
+  "common": {
+    "actions": {
+      "cancel": "Peruuta",
+      "save": "Tallenna",
+      "add": "Lisää",
+      "share": "Jaa"
+    }
+  }
+}

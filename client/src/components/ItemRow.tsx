@@ -2,6 +2,7 @@ import type { Item } from '../types/Item';
 import { Checkbox, Typography, Card, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { Delete as TrashIcon, Add as PlusIcon, Remove as MinusIcon, MoreVert } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { decreaseItemQuantity, increaseItemQuantity } from '../services/itemService';
 
@@ -16,6 +17,7 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const dec = () => { setQuantity(q => Math.max(1, q - 1)); decreaseItemQuantity(item.id); }
   const inc = () => { setQuantity(q => q + 1); increaseItemQuantity(item.id); }
@@ -55,15 +57,15 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
             >
               <MenuItem onClick={() => { inc(); setAnchorEl(null); }}>
                 <ListItemIcon><PlusIcon fontSize="small" /></ListItemIcon>
-                <ListItemText primary="Lisää" />
+                <ListItemText primary={t('items.menu.increase')} />
               </MenuItem>
               <MenuItem onClick={() => { dec(); setAnchorEl(null); }}>
                 <ListItemIcon><MinusIcon fontSize="small" /></ListItemIcon>
-                <ListItemText primary="Vähennä" />
+                <ListItemText primary={t('items.menu.decrease')} />
               </MenuItem>
               <MenuItem onClick={() => { setAnchorEl(null); onDelete(item.id); }} sx={{ color: 'error.main' }}>
                 <ListItemIcon><TrashIcon fontSize="small" /></ListItemIcon>
-                <ListItemText primary="Poista" sx={{ color: 'inherit' }} />
+                <ListItemText primary={t('items.menu.delete')} sx={{ color: 'inherit' }} />
               </MenuItem>
             </Menu>
           </div>

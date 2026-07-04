@@ -1,5 +1,6 @@
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import { MoreVert, Delete as TrashIcon } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 
 export type ListOptionsMenuProps = {
@@ -9,6 +10,7 @@ export type ListOptionsMenuProps = {
 export const ListOptionsMenu = ({ onClearSelected }: ListOptionsMenuProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+    const { t } = useTranslation();
 
     return (
         <>
@@ -35,7 +37,7 @@ export const ListOptionsMenu = ({ onClearSelected }: ListOptionsMenuProps) => {
                     <ListItemIcon>
                         <TrashIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Tyhjennä valitut" />
+                    <ListItemText primary={t('items.menu.clearSelected')} />
                 </MenuItem>
             </Menu>
         </>

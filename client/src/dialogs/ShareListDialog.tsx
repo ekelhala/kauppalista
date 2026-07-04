@@ -1,4 +1,5 @@
 import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, ListItemSecondaryAction, ListItemText, TextField, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { searchUsers } from "../services/userService";
 import { shareList } from "../services/listService";
@@ -11,6 +12,7 @@ export type ShareListDialogProps = {
 }
 
 export const ShareListDialog = ({ opened, onClose, listId, onShared }: ShareListDialogProps) => {
+    const { t } = useTranslation();
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<{ id: string; username: string }[]>([]);
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -55,12 +57,12 @@ export const ShareListDialog = ({ opened, onClose, listId, onShared }: ShareList
 
     return (
         <Dialog open={opened} onClose={onClose}>
-            <DialogTitle>Jaa lista</DialogTitle>
+            <DialogTitle>{t('dialogs.shareList.title')}</DialogTitle>
             <DialogContent>
-                <Typography variant="body2" sx={{ mb: 1 }}>Etsi käyttäjää käyttäjätunnuksella</Typography>
+                <Typography variant="body2" sx={{ mb: 1 }}>{t('dialogs.shareList.searchPrompt')}</Typography>
                 <TextField
                     fullWidth
-                    placeholder="Hae käyttäjää"
+                    placeholder={t('dialogs.shareList.searchPlaceholder')}
                     value={query}
                     onChange={(e) => {
                         if (e.currentTarget.value.trim() === '') {
@@ -74,7 +76,7 @@ export const ShareListDialog = ({ opened, onClose, listId, onShared }: ShareList
 
                 <div style={{ maxHeight: 200, overflow: 'auto', marginBottom: 12 }}>
                     {results.length === 0 ? (
-                        <Typography color="text.secondary">Ei hakutuloksia</Typography>
+                        <Typography color="text.secondary">{t('dialogs.shareList.noResults')}</Typography>
                     ) : (
                         <List>
                             {results.map(u => (
@@ -82,7 +84,7 @@ export const ShareListDialog = ({ opened, onClose, listId, onShared }: ShareList
                                     <ListItemText primary={u.username} />
                                     <ListItemSecondaryAction>
                                         <Button size="small" variant={selectedUser === u.id ? 'contained' : 'outlined'} onClick={() => setSelectedUser(u.id)}>
-                                            {selectedUser === u.id ? 'Valittu' : 'Valitse'}
+                                            {selectedUser === u.id ? t('dialogs.shareList.selected') : t('dialogs.shareList.select')}
                                         </Button>
                                     </ListItemSecondaryAction>
                                 </ListItem>
@@ -92,8 +94,8 @@ export const ShareListDialog = ({ opened, onClose, listId, onShared }: ShareList
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" onClick={onClose}>Peruuta</Button>
-                <Button onClick={handleShare} disabled={!selectedUser || !listId} startIcon={loading ? <CircularProgress size={16} /> : null} loading={loading}>Jaa</Button>
+                <Button variant="outlined" onClick={onClose}>{t('common.actions.cancel')}</Button>
+                <Button onClick={handleShare} disabled={!selectedUser || !listId} startIcon={loading ? <CircularProgress size={16} /> : null} loading={loading}>{t('common.actions.share')}</Button>
             </DialogActions>
         </Dialog>
     )

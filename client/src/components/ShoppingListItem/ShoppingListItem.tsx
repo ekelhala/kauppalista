@@ -1,6 +1,7 @@
 import type { List } from '../../types/List';
 import { List as MuiList, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Chip } from '@mui/material';
 import { PinEnd } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { ListItemMenu } from './ListItemMenu';
 
@@ -20,6 +21,7 @@ export const ShoppingListItem = ({ list,
                                     onDelete,
                                     onPinToggle,
                                     isPinned = false }: Props) => {
+  const { t } = useTranslation();
   const initial = (list.name || '?').charAt(0).toUpperCase();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -68,7 +70,7 @@ export const ShoppingListItem = ({ list,
         </ListItemAvatar>
         <ListItemText
           primary={list.name}
-          secondary={`${list.items.length} tuotetta`}
+          secondary={t('lists.badge.itemCount', { count: list.items.length })}
           slotProps={{
             primary: { sx: { fontWeight: 600 } },
             secondary: { sx: { color: 'text.secondary' } },
