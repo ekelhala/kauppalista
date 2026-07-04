@@ -91,15 +91,20 @@ dialogs. These depend on everything from Steps 2–4 being complete.
     (`ItemsView.tsx:91-98`).
 13. Keep `deleteItem` callback wiring.
 
-### Sticky footer
-14. Replace sticky `div` with `Box sx={{ position:'sticky', bottom:0,
-    width:'100%', bgcolor:'background.default', py:1 }}`.
-15. Replace `Button` ("Lisää tuote") with MUI `Button variant="contained"
-    fullWidth size="small" endIcon={<Add/>}` (move icon to end to match current
-    layout, or keep `startIcon`).
-
-### Dialog
-16. Keep `AddItemDialog` wiring (MUI from Step 4) unchanged.
+### Add item FAB
+14. Remove the sticky footer `div` entirely — it is replaced by a floating
+    action button.
+15. Replace the "Lisää tuote" `Button` with a MUI `Fab` containing a plus
+    icon, fixed to the bottom-right of the viewport:
+    ```tsx
+    <Fab color="primary" aria-label="Lisää tuote"
+         onClick={() => setDialogOpened(true)}
+         sx={{ position: 'fixed', bottom: 16, right: 16 }}>
+      <Add />
+    </Fab>
+    ```
+16. The FAB opens the `AddItemDialog` (MUI from Step 4) — only the trigger
+    changes; the dialog wiring and `handleAddItem` callback are unchanged.
 
 ## Verification
 

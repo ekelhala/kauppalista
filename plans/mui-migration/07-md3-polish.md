@@ -22,14 +22,12 @@ purely cosmetic.
 5. Optional: add an `AppBar` + `Toolbar` as a real top app bar (replaces the
    inline header `Box` in `ListsView`). Include the app title and the
    `AccountMenu`. This gives a consistent MD3 top bar across routes.
-6. Optional: on mobile, replace the sticky "Lisää tuote" button with an
-   extended `FloatingActionButton` (FAB) pinned to the bottom-right.
-7. Optional: add a `BottomNavigation` for the three tabs (pinned / my /
+6. Optional: add a `BottomNavigation` for the three tabs (pinned / my /
    shared) on small screens, hiding the `Tabs` bar — improves mobile UX.
-8. Tune dark theme surface colors toward MD3 dark scheme tonal elevation
+7. Tune dark theme surface colors toward MD3 dark scheme tonal elevation
    (use `theme.palette.background.paper` + `alpha()` overlays for elevated
    surfaces).
-9. Verify the PWA manifest colors in `client/vite.config.ts`
+8. Verify the PWA manifest colors in `client/vite.config.ts`
    (`theme_color: '#2d6a4f'`, `background_color: '#f4f1e8'`) still match the
    new theme; update only if the brand palette changed.
 
