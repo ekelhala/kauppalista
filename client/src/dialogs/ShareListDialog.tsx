@@ -1,4 +1,4 @@
-import { Modal, Button, TextInput, Box, Text } from "@mantine/core";
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, ListItemSecondaryAction, ListItemText, TextField, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { searchUsers } from "../services/userService";
 import { shareList } from "../services/listService";
@@ -54,10 +54,12 @@ export const ShareListDialog = ({ opened, onClose, listId, onShared }: ShareList
     }
 
     return (
-        <Modal opened={opened} onClose={onClose} title="Jaa lista">
-            <Box>
-                <Text mb="xs">Etsi käyttäjää käyttäjätunnuksella</Text>
-                <TextInput
+        <Dialog open={opened} onClose={onClose}>
+            <DialogTitle>Jaa lista</DialogTitle>
+            <DialogContent>
+                <Typography variant="body2" sx={{ mb: 1 }}>Etsi käyttäjää käyttäjätunnuksella</Typography>
+                <TextField
+                    fullWidth
                     placeholder="Hae käyttäjää"
                     value={query}
                     onChange={(e) => {
@@ -67,29 +69,32 @@ export const ShareListDialog = ({ opened, onClose, listId, onShared }: ShareList
                             setLoading(false);
                         }
                         setQuery(e.currentTarget.value)}}
-                    mb="sm"
+                    sx={{ mb: 1 }}
                 />
 
                 <div style={{ maxHeight: 200, overflow: 'auto', marginBottom: 12 }}>
                     {results.length === 0 ? (
-                        <Text c="dimmed">Ei hakutuloksia</Text>
+                        <Typography color="text.secondary">Ei hakutuloksia</Typography>
                     ) : (
-                        results.map(u => (
-                            <div key={u.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 8 }}>
-                                <div>{u.username}</div>
-                                <Button size="xs" variant={selectedUser === u.id ? 'filled' : 'outline'} onClick={() => setSelectedUser(u.id)}>
-                                    {selectedUser === u.id ? 'Valittu' : 'Valitse'}
-                                </Button>
-                            </div>
-                        ))
+                        <List>
+                            {results.map(u => (
+                                <ListItem key={u.id} sx={{ paddingY: 0.5 }}>
+                                    <ListItemText primary={u.username} />
+                                    <ListItemSecondaryAction>
+                                        <Button size="small" variant={selectedUser === u.id ? 'contained' : 'outlined'} onClick={() => setSelectedUser(u.id)}>
+                                            {selectedUser === u.id ? 'Valittu' : 'Valitse'}
+                                        </Button>
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            ))}
+                        </List>
                     )}
                 </div>
-
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                    <Button variant="default" onClick={onClose}>Peruuta</Button>
-                    <Button onClick={handleShare} disabled={!selectedUser || !listId} loading={loading}>Jaa</Button>
-                </div>
-            </Box>
-        </Modal>
+            </DialogContent>
+            <DialogActions>
+                <Button variant="outlined" onClick={onClose}>Peruuta</Button>
+                <Button onClick={handleShare} disabled={!selectedUser || !listId} startIcon={loading ? <CircularProgress size={16} /> : null} loading={loading}>Jaa</Button>
+            </DialogActions>
+        </Dialog>
     )
 }

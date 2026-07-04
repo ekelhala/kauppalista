@@ -1,4 +1,4 @@
-import { Container, Center, Loader } from '@mantine/core';
+import { Box, Container, CircularProgress } from '@mui/material';
 import { BrowserRouter, Routes, Route, useParams, useLocation } from 'react-router-dom';
 import { ListsView } from './views/ListsView';
 import { ListView } from './views/ItemsView';
@@ -7,15 +7,11 @@ import { useEffect, useRef, useState } from 'react';
 import { registerTokenGetter } from './services/api';
 import SilentRenew from './components/SilentRenew';
 import FrontPage from './components/FrontPage';
-import type { Theme } from './types/Theme';
-import { useMantineColorScheme } from '@mantine/core';
+import { useColorMode } from './ColorModeProvider';
 
 const App = () => {
-
-  const [theme, setTheme] = useState<Theme>('light');
-  const { setColorScheme } = useMantineColorScheme();
-  const [loadingTheme, setLoadingTheme] = useState(true);
-  const [activeTab, setActiveTab] = useState<string>('pinned');
+  const { mode, toggle } = useColorMode();
+  const [activeView, setActiveView] = useState<'pinned' | 'my' | 'shared'>('pinned');
 
   const auth = useAuth();
   // Track if we've already attempted a one-time silent signin during this
@@ -42,40 +38,22 @@ const App = () => {
     }
   }, [auth]);
 
-  // Effects for theme changes and setting theme on load
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      setTheme(savedTheme);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (loadingTheme) {
-      setLoadingTheme(false);
-      return;
-    }
-    setColorScheme(theme === 'dark' ? 'dark' : 'light');
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
   return (
     <BrowserRouter>
-      <Container size="sm" py="xl">
+      <Container maxWidth="sm" sx={{ py: 4 }}>
         {auth.isLoading ? (
-          <Center style={{ height: '50vh', flexDirection: 'column' }}>
-            <Loader />
-          </Center>
+          <Box sx={{ height: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
         ) : auth.isAuthenticated ? (
           <Routes>
             <Route 
               path="/" 
               element={<ListsView 
-                          theme={theme} 
-                          setTheme={setTheme} 
-                          activeTab={activeTab} 
-                          setActiveTab={setActiveTab} />} />
+                          mode={mode} 
+                          toggle={toggle} 
+                          activeView={activeView} 
+                          setActiveView={setActiveView} />} />
             <Route path="/lists/:id" element={<ListViewWrapper />} />
             {/* Route used only for silent renew iframe callback */}
             <Route path="/silent-renew" element={<SilentRenew />} />

@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
 import type { Item } from '../types/Item';
-import { Title, Divider, Button, List, Loader } from '@mantine/core';
+import { Typography, Divider, Button, List as MuiList, ListItem, CircularProgress, Fab } from '@mui/material';
+import { ArrowBack, Add } from '@mui/icons-material';
 import { addItem, getItems, checkItem, deleteItem, clearSelectedItems } from '../services/listService';
 import ItemRow from '../components/ItemRow';
 import { useNavigate } from 'react-router-dom';
-import { IconArrowLeft, IconPlus } from '@tabler/icons-react';
 import { AddItemDialog } from '../dialogs/AddItemDialog';
 import { ListOptionsMenu } from '../components/ListOptionsMenu';
 
@@ -99,61 +99,41 @@ export const ListView = ({ listId, listName }: Props) => {
 
   if (!listExists) {
     return (
-      <div>
-        <Title order={3}>404: listaa ei löydy</Title>
-      </div>
+      <Typography variant="h6">404: listaa ei löydy</Typography>
     );
   }
 
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-        <Button variant="subtle" size="xs" onClick={() => { navigate('/') }}>
-          <IconArrowLeft size={16} style={{ marginRight: 4 }} />
-          Takaisin
-        </Button>
+        <Button color="inherit" onClick={() => { navigate('/') }} startIcon={<ArrowBack />}>Takaisin</Button>
         <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-          <Title order={3} style={{ margin: 0 }}>{listName}</Title>
+          <Typography variant="h6" style={{ margin: 0 }}>{listName}</Typography>
           <ListOptionsMenu onClearSelected={() => handleClearSelected()} />
         </div>
       </div>
-      <Divider my="sm" />
+      <Divider sx={{ my: 1 }} />
       {loading ? (
-        <Loader />
+        <CircularProgress />
       ) : (
-        <>
-        <List spacing="xs" size="sm" center style={{ marginBottom: 8, width: '100%' }}>
+        <MuiList sx={{ marginBottom: 8, width: '100%' }}>
           {items.map(i => (
-              <ItemRow
-                key={i.id}
-                item={i}
-                onCheck={handleCheck}
-                onDelete={async (id) => {
-                  await deleteItem(id);
-                  await fetchListItems();
-                }}
-              />
+              <ListItem key={i.id}>
+                <ItemRow
+                  item={i}
+                  onCheck={handleCheck}
+                  onDelete={async (id) => {
+                    await deleteItem(id);
+                    await fetchListItems();
+                  }}
+                />
+              </ListItem>
           ))}
-        </List>
-        <div style={{ 
-          position: 'sticky', 
-          bottom: 0, 
-          width: '100%', 
-          background: 'var(--mantine-color-body)', 
-          paddingTop: 8, 
-          paddingBottom: 8 
-        }}>
-          <Button 
-            color='brand'
-            variant='filled' 
-            size='xs' 
-            fullWidth
-            onClick={() => setDialogOpened(true)}>
-            Lisää tuote <IconPlus size={16} style={{ marginRight: 4 }} />
-          </Button>
-        </div>
-        </>
+        </MuiList>
       )}
+      <Fab color="primary" aria-label="Lisää tuote" onClick={() => setDialogOpened(true)} sx={{ position: 'fixed', bottom: 16, right: 16 }}>
+        <Add />
+      </Fab>
       <AddItemDialog
         opened={dialogOpened}
         onClose={() => setDialogOpened(false)}

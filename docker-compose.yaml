@@ -22,15 +22,16 @@ services:
       db:
         condition: service_healthy
     environment:
-      PSQL_HOST: db
-      PSQL_USER: kauppalista
-      PSQL_PASSWORD: kauppalista
-      PSQL_DB: kauppalista
+      SERVER_HOST: ${SERVER_HOST:-0.0.0.0}
+      SERVER_PORT: ${SERVER_PORT:-9000}
+      DATABASE_URL: postgresql://kauppalista:kauppalista@db:5432/kauppalista
+      AUTH0_ISSUER: ${AUTH0_ISSUER}
+      AUTH0_API_AUDIENCE: ${AUTH0_API_AUDIENCE}
+      AUTH0_MANAGEMENT_AUDIENCE: ${AUTH0_MANAGEMENT_AUDIENCE}
+      AUTH0_MANAGEMENT_CLIENT_ID: ${AUTH0_MANAGEMENT_CLIENT_ID}
       AUTH0_MANAGEMENT_CLIENT_SECRET: ${AUTH0_MANAGEMENT_CLIENT_SECRET}
     ports:
       - "9000:9000"
-    volumes:
-      - ./api/config.yaml:/app/config.yaml:ro
 
   client:
     build:

@@ -1,6 +1,6 @@
 import type { Item } from '../types/Item';
-import { Checkbox, Text, Card, ActionIcon, Menu, useMantineColorScheme } from '@mantine/core';
-import { IconTrash, IconPlus, IconMinus, IconDotsVertical } from '@tabler/icons-react';
+import { Checkbox, Typography, Card, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, useTheme } from '@mui/material';
+import { Delete as TrashIcon, Add as PlusIcon, Remove as MinusIcon, MoreVert } from '@mui/icons-material';
 import { useState } from 'react';
 import { decreaseItemQuantity, increaseItemQuantity } from '../services/itemService';
 
@@ -12,66 +12,58 @@ type Props = {
 
 export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
   const [quantity, setQuantity] = useState<number>(item.quantity);
-  const [menuOpened, setMenuOpened] = useState(false);
-  const { colorScheme } = useMantineColorScheme();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
+  const theme = useTheme();
 
-  const dec = () => {
-    setQuantity(q => Math.max(1, q - 1));
-    decreaseItemQuantity(item.id);
-  }
-  const inc = () => {
-    setQuantity(q => q + 1);
-    increaseItemQuantity(item.id);
-}
+  const dec = () => { setQuantity(q => Math.max(1, q - 1)); decreaseItemQuantity(item.id); }
+  const inc = () => { setQuantity(q => q + 1); increaseItemQuantity(item.id); }
 
-  const getCardStyles = () => {
-    const isDark = colorScheme === 'dark';
-    const baseColor = isDark ? 'var(--mantine-color-dark-6)' : 'var(--mantine-color-brand-2)';
-    const checkedColor = isDark ? 'var(--mantine-color-dark-5)' : 'var(--mantine-color-brand-3)';
-    
-    return {
-      width: '100%',
-      padding: 8,
-      marginBottom: 4,
-      backgroundColor: item.checked ? checkedColor : baseColor,
-      opacity: item.checked ? 0.8 : 1
-    };
+  const isDark = theme.palette.mode === 'dark';
+  const baseColor = isDark ? theme.palette.grey[700] : 'var(--mui-palette-primary-light, #e3f2fd)';
+  const checkedColor = isDark ? theme.palette.grey[600] : 'var(--mui-palette-primary-main, #1976d2)';
+
+  const cardSx = {
+    width: '100%',
+    padding: 2,
+    mb: 1,
+    backgroundColor: item.checked ? checkedColor : baseColor,
+    opacity: item.checked ? 0.8 : 1
   };
 
   return (
-    <Card radius="sm" shadow="sm" withBorder style={getCardStyles()}>
+    <Card variant="outlined" elevation={0} sx={cardSx}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
-          <Checkbox
-            checked={item.checked}
-            onChange={(e) => onCheck(item.id, e.currentTarget.checked)}
-          />
-          <Text style={{ wordBreak: 'break-word', textDecoration: item.checked ? 'line-through' : 'none' }}>{item.name}</Text>
+          <Checkbox checked={item.checked} onChange={(e) => onCheck(item.id, e.currentTarget.checked)} />
+          <Typography sx={{ wordBreak: 'break-word', textDecoration: item.checked ? 'line-through' : 'none' }}>{item.name}</Typography>
         </div>
-
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Text>{quantity}</Text>
-            <Menu 
-              withArrow position="bottom"
-              closeOnItemClick={false} opened={menuOpened} onChange={setMenuOpened}
+            <Typography>{quantity}</Typography>
+            <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)} aria-label={`more-${item.id}`}>
+              <MoreVert />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={menuOpen}
+              onClose={() => setAnchorEl(null)}
+              onClick={(e) => e.stopPropagation()}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-              <Menu.Target>
-                <ActionIcon size="sm" variant="light" aria-label={`more-${item.id}`}>
-                  <IconDotsVertical size={18} />
-                </ActionIcon>
-              </Menu.Target>
-
-              <Menu.Dropdown>
-                <Menu.Item onClick={inc}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><IconPlus size={16} />Lisää</span></Menu.Item>
-                <Menu.Item onClick={dec}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><IconMinus size={16} />Vähennä</span></Menu.Item>
-                <Menu.Item onClick={() => {setMenuOpened(false); onDelete(item.id)}}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--mantine-color-red-6)' }}>
-                    <IconTrash size={16} />
-                    Poista
-                  </span>
-                </Menu.Item>
-              </Menu.Dropdown>
+              <MenuItem onClick={() => { inc(); setAnchorEl(null); }}>
+                <ListItemIcon><PlusIcon fontSize="small" /></ListItemIcon>
+                <ListItemText primary="Lisää" />
+              </MenuItem>
+              <MenuItem onClick={() => { dec(); setAnchorEl(null); }}>
+                <ListItemIcon><MinusIcon fontSize="small" /></ListItemIcon>
+                <ListItemText primary="Vähennä" />
+              </MenuItem>
+              <MenuItem onClick={() => { setAnchorEl(null); onDelete(item.id); }} sx={{ color: 'error.main' }}>
+                <ListItemIcon><TrashIcon fontSize="small" /></ListItemIcon>
+                <ListItemText primary="Poista" sx={{ color: 'inherit' }} />
+              </MenuItem>
             </Menu>
           </div>
         </div>

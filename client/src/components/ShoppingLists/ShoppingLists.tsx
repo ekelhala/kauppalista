@@ -1,5 +1,6 @@
 import type { List } from "../../types/List";
 import ShoppingListItem from "../ShoppingListItem";
+import { Stack } from "@mui/material";
 
 interface ShoppingListsProps {
     lists: List[];
@@ -19,7 +20,7 @@ export const ShoppingLists = ({ lists,
                                 onListTogglePinned,
                                 isListOwner }: ShoppingListsProps) => {
     return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <Stack spacing={1.5}>
         {lists.map(list => (
             <ShoppingListItem
                 key={list.id}
@@ -32,6 +33,6 @@ export const ShoppingLists = ({ lists,
                 isOwner={isListOwner(list.id)}
             />
         ))}
-    </div>
+    </Stack>
     )
 }

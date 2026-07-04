@@ -1,4 +1,4 @@
-import { Center, Title, Button } from '@mantine/core';
+import { Box, Typography, Button } from '@mui/material';
 import { useAuth } from 'react-oidc-context';
 import userManager from '../authConfig';
 
@@ -9,18 +9,15 @@ export default function FrontPage() {
     try {
       auth.signinRedirect();
     } catch {
-      // If redirect fails (popup blocked or other issue), fallback to a
-      // non-interactive sign-in that just clears the user and shows the
-      // sign-in button again.
       try { await auth.removeUser(); } catch (err) { console.error('Signin redirect failed', err); }
       try { await userManager.clearStaleState(); } catch (err) { console.error('Clearing stale state failed', err); }
     }
   };
 
   return (
-    <Center style={{ height: '60vh', flexDirection: 'column' }}>
-      <Title order={1}>Kauppalista</Title>
-      <Button mt="lg" onClick={startSignin}>Kirjaudu</Button>
-    </Center>
+    <Box sx={{ height: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Typography variant="h4">Kauppalista</Typography>
+      <Button variant="contained" sx={{ mt: 2 }} onClick={startSignin}>Kirjaudu</Button>
+    </Box>
   );
 }

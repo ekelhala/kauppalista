@@ -2,31 +2,14 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 import App from './App.tsx'
-import '@mantine/core/styles.css';
 import './theme.css';
 import {AuthProvider} from 'react-oidc-context'
-import { createTheme, MantineProvider } from '@mantine/core';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 import userManager from './authConfig.ts';
-
-const appTheme = createTheme({
-  primaryColor: 'brand',
-  primaryShade: { light: 7, dark: 5 },
-  colors: {
-    brand: [
-      '#e9f5ee',
-      '#d6eadf',
-      '#bedfcd',
-      '#a4d4ba',
-      '#8ac9a6',
-      '#70be92',
-      '#58b37f',
-      '#40916c',
-      '#2d6a4f',
-      '#1b4332',
-    ],
-  },
-});
+import { ColorModeProvider, useColorMode } from './ColorModeProvider';
+import { getTheme } from './theme';
 
 // If we were redirected back from the identity provider the URL will contain
 // parameters like `code` and `state`. Process the callback with the user
@@ -62,12 +45,22 @@ const updateSW = registerSW({
 
 void updateSW;
 
+function MuiApp() {
+  const { mode } = useColorMode();
+  return (
+    <ThemeProvider theme={getTheme(mode)}>
+      <CssBaseline />
+      <AuthProvider userManager={userManager}>
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider theme={appTheme}>
-      <AuthProvider userManager={userManager}>
-      <App />
-      </AuthProvider>
-    </MantineProvider>
+    <ColorModeProvider>
+      <MuiApp />
+    </ColorModeProvider>
   </StrictMode>,
 )
