@@ -11,8 +11,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@mantine/core": "^9.4.1",
     "@mantine/hooks": "^9.4.0",
+    "@mui/icons-material": "^9.2.0",
+    "@mui/material": "^9.2.0",
     "@tabler/icons-react": "^3.44.0",
     "@types/axios": "^0.14.4",
     "@types/react-router-dom": "^5.3.3",

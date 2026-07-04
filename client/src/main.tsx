@@ -6,6 +6,8 @@ import '@mantine/core/styles.css';
 import './theme.css';
 import {AuthProvider} from 'react-oidc-context'
 import { createTheme, MantineProvider } from '@mantine/core';
+import { ThemeProvider, createTheme as createMuiTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 import userManager from './authConfig.ts';
 
@@ -25,6 +27,15 @@ const appTheme = createTheme({
       '#2d6a4f',
       '#1b4332',
     ],
+  },
+});
+
+const muiTheme = createMuiTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#2d6a4f',
+    },
   },
 });
 
@@ -65,9 +76,12 @@ void updateSW;
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <MantineProvider theme={appTheme}>
-      <AuthProvider userManager={userManager}>
-      <App />
-      </AuthProvider>
+      <ThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        <AuthProvider userManager={userManager}>
+        <App />
+        </AuthProvider>
+      </ThemeProvider>
     </MantineProvider>
   </StrictMode>,
 )
