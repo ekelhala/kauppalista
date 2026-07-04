@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import type { Item } from '../types/Item';
+import { useTranslation } from 'react-i18next';
 import { Typography, Divider, Button, List as MuiList, ListItem, CircularProgress, Fab } from '@mui/material';
 import { ArrowBack, Add } from '@mui/icons-material';
 import { addItem, getItems, checkItem, deleteItem, clearSelectedItems } from '../services/listService';
@@ -14,6 +15,7 @@ type Props = {
 }
 
 export const ListView = ({ listId, listName }: Props) => {
+  const { t } = useTranslation();
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpened, setDialogOpened] = useState(false);
@@ -99,14 +101,14 @@ export const ListView = ({ listId, listName }: Props) => {
 
   if (!listExists) {
     return (
-      <Typography variant="h6">404: listaa ei löydy</Typography>
+      <Typography variant="h6">{t('items.notFound')}</Typography>
     );
   }
 
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-        <Button color="inherit" onClick={() => { navigate('/') }} startIcon={<ArrowBack />}>Takaisin</Button>
+        <Button color="inherit" onClick={() => { navigate('/') }} startIcon={<ArrowBack />}>{t('items.actions.back')}</Button>
         <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
           <Typography variant="h6" style={{ margin: 0 }}>{listName}</Typography>
           <ListOptionsMenu onClearSelected={() => handleClearSelected()} />
@@ -131,7 +133,7 @@ export const ListView = ({ listId, listName }: Props) => {
           ))}
         </MuiList>
       )}
-      <Fab color="primary" aria-label="Lisää tuote" onClick={() => setDialogOpened(true)} sx={{ position: 'fixed', bottom: 16, right: 16 }}>
+      <Fab color="primary" aria-label={t('items.aria.addItem')} onClick={() => setDialogOpened(true)} sx={{ position: 'fixed', bottom: 16, right: 16 }}>
         <Add />
       </Fab>
       <AddItemDialog

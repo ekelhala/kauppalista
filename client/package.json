@@ -20,9 +20,12 @@
     "axios": "^1.18.1",
     "baseline-browser-mapping": "^2.10.41",
     "caniuse-lite": "^1.0.30001800",
+    "i18next": "^26.3.4",
+    "i18next-browser-languagedetector": "^8.2.1",
     "oidc-client-ts": "^3.5.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-i18next": "^17.0.8",
     "react-oidc-context": "^3.3.1",
     "react-router-dom": "^7.18.1"
   },

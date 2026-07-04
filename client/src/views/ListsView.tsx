@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { List } from "../types/List";
 import { deleteList, getLists, getSharedWithMeLists, getPinnedLists, pinList, unpinList } from "../services/listService";
+import { useTranslation } from 'react-i18next';
 import { Container, Typography, Box, Button, CircularProgress, Drawer, List as MuiList, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, AppBar, Toolbar, IconButton } from '@mui/material';
 import { AddListDialog } from "../dialogs/AddListDialog";
 import { ShareListDialog } from "../dialogs/ShareListDialog";
@@ -21,6 +22,7 @@ export interface ListsViewParams {
 }
 
 export const ListsView = ({ toggle, mode, activeView, setActiveView }: ListsViewParams) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [lists, setLists] = useState<List[]>([]);
@@ -81,9 +83,9 @@ export const ListsView = ({ toggle, mode, activeView, setActiveView }: ListsView
   }, [searchParams, setActiveView]);
 
   const navItems: { value: ViewType; label: string; icon: React.ReactNode; count: number }[] = [
-    { value: 'pinned', label: 'Kiinnitetyt', icon: <PushPin />, count: pinnedLists.length },
-    { value: 'my', label: 'Omat', icon: <ListIcon />, count: lists.length },
-    { value: 'shared', label: 'Jaettu kanssani', icon: <Share />, count: sharedWithMeLists.length },
+    { value: 'pinned', label: t('lists.tabs.pinned'), icon: <PushPin />, count: pinnedLists.length },
+    { value: 'my', label: t('lists.tabs.my'), icon: <ListIcon />, count: lists.length },
+    { value: 'shared', label: t('lists.tabs.shared'), icon: <Share />, count: sharedWithMeLists.length },
   ];
 
   return (
@@ -91,13 +93,13 @@ export const ListsView = ({ toggle, mode, activeView, setActiveView }: ListsView
       <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton size="small" onClick={handleMenuOpen} aria-label="Avaa navigaatio">
+            <IconButton size="small" onClick={handleMenuOpen} aria-label={t('lists.aria.openNav')}>
               <MenuIcon />
             </IconButton>
-            <Typography variant="h5" component="h1">Listat</Typography>
+            <Typography variant="h5" component="h1">{t('lists.title')}</Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Button variant="contained" onClick={() => setDialogOpen(true)} startIcon={<Add />}>Uusi</Button>
+            <Button variant="contained" onClick={() => setDialogOpen(true)} startIcon={<Add />}>{t('lists.actions.new')}</Button>
             <AccountMenu onThemeToggle={handleThemeToggle} mode={mode} />
           </Box>
         </Toolbar>
@@ -112,7 +114,7 @@ export const ListsView = ({ toggle, mode, activeView, setActiveView }: ListsView
         }}
       >
         <Box sx={{ p: 2 }}>
-          <Typography variant="h6" component="div">Näkymät</Typography>
+          <Typography variant="h6" component="div">{t('lists.navTitle')}</Typography>
         </Box>
         <Divider />
         <MuiList sx={{ px: 1 }}>
@@ -146,7 +148,7 @@ export const ListsView = ({ toggle, mode, activeView, setActiveView }: ListsView
             {activeView === 'pinned' && (
               <Box sx={{ py: 2 }}>
                 {pinnedLists.length === 0 ? (
-                  <Typography color="text.secondary">Ei kiinnitettyjä listoja</Typography>
+                  <Typography color="text.secondary">{t('lists.empty.pinned')}</Typography>
                 ) : (
                   <ShoppingLists
                     lists={pinnedLists}
@@ -164,7 +166,7 @@ export const ListsView = ({ toggle, mode, activeView, setActiveView }: ListsView
             {activeView === 'my' && (
               <Box sx={{ py: 2 }}>
                 {lists.length === 0 ? (
-                  <Typography color="text.secondary">Ei listoja</Typography>
+                  <Typography color="text.secondary">{t('lists.empty.my')}</Typography>
                 ) : (
                   <ShoppingLists
                     lists={lists}
@@ -186,7 +188,7 @@ export const ListsView = ({ toggle, mode, activeView, setActiveView }: ListsView
             {activeView === 'shared' && (
               <Box sx={{ py: 2 }}>
                 {sharedWithMeLists.length === 0 ? (
-                  <Typography color="text.secondary">Ei jaettuja listoja</Typography>
+                  <Typography color="text.secondary">{t('lists.empty.shared')}</Typography>
                 ) : (
                   <ShoppingLists
                     lists={sharedWithMeLists}
