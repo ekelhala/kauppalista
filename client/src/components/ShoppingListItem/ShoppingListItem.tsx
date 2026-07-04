@@ -1,5 +1,6 @@
 import type { List } from '../../types/List';
-import { Card, CardActionArea, Typography, Chip, useTheme } from '@mui/material';
+import { List as MuiList, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Chip, useTheme } from '@mui/material';
+import { PinEnd } from '@mui/icons-material';
 import { ListItemMenu } from './ListItemMenu';
 
 type Props = {
@@ -12,32 +13,40 @@ type Props = {
   isPinned?: boolean;
 };
 
-export const ShoppingListItem = ({ list, 
-                                    onClick, 
-                                    onShare, 
-                                    onDelete, 
-                                    onPinToggle, 
+export const ShoppingListItem = ({ list,
+                                    onClick,
+                                    onShare,
+                                    onDelete,
+                                    onPinToggle,
                                     isPinned = false }: Props) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
-  const bgColor = isDark ? theme.palette.grey[700] : 'var(--mui-palette-primary-light, #e3f2fd)';
+  const initial = (list.name || '?').charAt(0).toUpperCase();
 
   return (
-    <Card
-      key={list.id}
-      variant="outlined"
-      sx={{
-        cursor: onClick ? 'pointer' : 'default',
-        backgroundColor: bgColor,
-      }}
-    >
-      <CardActionArea onClick={() => onClick?.(list.id)}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{list.name}</Typography>
-          </div>
+    <MuiList dense={false}>
+      <ListItem
+        key={list.id}
+        disableGutters={false}
+        sx={{
+          py: 2,
+          px: 2,
+          cursor: onClick ? 'pointer' : 'default',
+          borderRadius: 2,
+          border: '1px solid',
+          borderColor: isDark ? 'divider' : 'primary.light',
+          backgroundColor: isDark ? 'background.paper' : 'background.default',
+          '&:hover': {
+            backgroundColor: isDark ? 'action.hover' : 'action.selected',
+          },
+        }}
+        secondaryAction={
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Chip size="small" color="primary" variant="outlined" label={`${list.items.length} tuotetta`} />
+            {isPinned && (
+              <ListItemIcon sx={{ justifyContent: 'flex-end' }}>
+                <PinEnd color="primary" />
+              </ListItemIcon>
+            )}
             <ListItemMenu
               list={list}
               onShare={onShare}
@@ -45,9 +54,27 @@ export const ShoppingListItem = ({ list,
               onPinToggle={onPinToggle}
               isPinned={isPinned} />
           </div>
-        </div>
-      </CardActionArea>
-    </Card>
+        }
+        onClick={() => onClick?.(list.id)}
+      >
+        <ListItemAvatar>
+          <Chip
+            label={initial}
+            color="primary"
+            variant="outlined"
+            sx={{ width: 40, height: 40, minWidth: 40, fontSize: 16, fontWeight: 700 }}
+          />
+        </ListItemAvatar>
+        <ListItemText
+          primary={list.name}
+          secondary={`${list.items.length} tuotetta`}
+          slotProps={{
+            primary: { sx: { fontWeight: 600 } },
+            secondary: { sx: { color: 'text.secondary' } },
+          }}
+        />
+      </ListItem>
+    </MuiList>
   );
 };
 
