@@ -87,9 +87,9 @@ export const ListsView = ({ toggle, mode, activeTab, setActiveTab }: ListsViewPa
           setSearchParams(params, { replace: true });
         }}>
           <Box sx={{ display: 'flex', flexWrap: 'nowrap', overflowX: 'auto', gap: 1, whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch' }}>
-            <Tab value="pinned" label={`Kiinnitetyt (<Typography component="span" color="primary">{pinnedLists.length}</Typography>)`} />
-            <Tab value="my" label={`Omat (<Typography component="span" color="primary">{lists.length}</Typography>)`} />
-            <Tab value="shared" label={`Jaettu kanssani (<Typography component="span" color="primary">{sharedWithMeLists.length}</Typography>)`} />
+            <Tab value="pinned" label={<span>Kiinnitetyt (<Typography component="span" color="primary">{pinnedLists.length}</Typography>)</span>} />
+            <Tab value="my" label={<span>Omat (<Typography component="span" color="primary">{lists.length}</Typography>)</span>} />
+            <Tab value="shared" label={<span>Jaettu kanssani (<Typography component="span" color="primary">{sharedWithMeLists.length}</Typography>)</span>} />
           </Box>
 
           {activeTab === 'pinned' && (
