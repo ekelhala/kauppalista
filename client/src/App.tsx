@@ -7,14 +7,10 @@ import { useEffect, useRef, useState } from 'react';
 import { registerTokenGetter } from './services/api';
 import SilentRenew from './components/SilentRenew';
 import FrontPage from './components/FrontPage';
-import type { Theme } from './types/Theme';
-import { useMantineColorScheme } from '@mantine/core';
+import { useColorMode } from './ColorModeProvider';
 
 const App = () => {
-
-  const [theme, setTheme] = useState<Theme>('light');
-  const { setColorScheme } = useMantineColorScheme();
-  const [loadingTheme, setLoadingTheme] = useState(true);
+  const { mode, toggle } = useColorMode();
   const [activeTab, setActiveTab] = useState<string>('pinned');
 
   const auth = useAuth();
@@ -42,24 +38,6 @@ const App = () => {
     }
   }, [auth]);
 
-  // Effects for theme changes and setting theme on load
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      setTheme(savedTheme);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (loadingTheme) {
-      setLoadingTheme(false);
-      return;
-    }
-    setColorScheme(theme === 'dark' ? 'dark' : 'light');
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
   return (
     <BrowserRouter>
       <Container size="sm" py="xl">
@@ -72,8 +50,8 @@ const App = () => {
             <Route 
               path="/" 
               element={<ListsView 
-                          theme={theme} 
-                          setTheme={setTheme} 
+                          mode={mode} 
+                          toggle={toggle} 
                           activeTab={activeTab} 
                           setActiveTab={setActiveTab} />} />
             <Route path="/lists/:id" element={<ListViewWrapper />} />

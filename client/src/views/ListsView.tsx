@@ -12,14 +12,14 @@ import { useAuth } from "react-oidc-context";
 import type { Theme } from "../types/Theme";
 
 export interface ListsViewParams {
-    setTheme: (theme: Theme) => void;
-    theme: Theme;
+    toggle: () => void;
+    mode: Theme;
     activeTab: string;
     setActiveTab: (tab: string) => void;
 }
 
-export const ListsView = ({ setTheme, 
-                            theme, 
+export const ListsView = ({ toggle, 
+                            mode, 
                             activeTab, 
                             setActiveTab }: ListsViewParams) => {
   const navigate = useNavigate();
@@ -49,8 +49,7 @@ export const ListsView = ({ setTheme,
   }
 
   const handleThemeToggle = () => {
-    const newTheme: Theme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
+    toggle();
   }
 
   useEffect(() => {
@@ -78,7 +77,7 @@ export const ListsView = ({ setTheme,
           <div>
             <AccountMenu 
               onThemeToggle={handleThemeToggle} 
-              theme={theme} 
+              theme={mode} 
             />
           </div>
         </div>
