@@ -9,6 +9,7 @@ type Props = {
     onShare?: (id: string) => void;
     onDelete?: (id: string) => void;
     onPinToggle?: (id: string, currentlyPinned: boolean) => void;
+    onOpenChange?: (open: boolean) => void;
     isPinned?: boolean;
 };
 
@@ -20,15 +21,19 @@ const stopAnd = (e: MouseEvent, fn?: () => void) => {
 export const ListItemMenu = ({ list, 
                                onShare, 
                                onDelete, 
-                               onPinToggle, 
+                               onPinToggle,
+                               onOpenChange,
                                isPinned }: Props) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
+    const openMenu = (el: HTMLElement) => { setAnchorEl(el); onOpenChange?.(true); };
+    const close = () => { setAnchorEl(null); onOpenChange?.(false); };
+
     return (
         <>
             <IconButton
-                onClick={(e: MouseEvent) => stopAnd(e, () => setAnchorEl(e.currentTarget as HTMLElement))}
+                onClick={(e: MouseEvent) => stopAnd(e, () => openMenu(e.currentTarget as HTMLElement))}
                 aria-label="Avaa valikko"
                 aria-controls={open ? 'list-item-menu' : undefined}
                 aria-haspopup="true"
@@ -40,23 +45,23 @@ export const ListItemMenu = ({ list,
                 anchorEl={anchorEl}
                 id="list-item-menu"
                 open={open}
-                onClose={() => setAnchorEl(null)}
-                onClick={() => setAnchorEl(null)}
+                onClose={close}
+                onClick={close}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
                 {list.isOwner ? (
-                    <MenuItem onClick={(e: MouseEvent) => stopAnd(e, () => { onShare?.(list.id); setAnchorEl(null); })}>
+                    <MenuItem onClick={(e: MouseEvent) => stopAnd(e, () => { onShare?.(list.id); close(); })}>
                         <ListItemIcon><Share fontSize="small" /></ListItemIcon>
                         <ListItemText primary="Jaa" />
                     </MenuItem>
                 ) : null}
-                <MenuItem onClick={(e: MouseEvent) => stopAnd(e, () => { onPinToggle?.(list.id, !!isPinned); setAnchorEl(null); })}>
+                <MenuItem onClick={(e: MouseEvent) => stopAnd(e, () => { onPinToggle?.(list.id, !!isPinned); close(); })}>
                     <ListItemIcon>{isPinned ? <PushPinOutlined fontSize="small" /> : <PushPin fontSize="small" />}</ListItemIcon>
                     <ListItemText primary={isPinned ? 'Poista kiinnitys' : 'Kiinnitä'} />
                 </MenuItem>
                 {list.isOwner ? (
-                    <MenuItem onClick={(e: MouseEvent) => stopAnd(e, () => { onDelete?.(list.id); setAnchorEl(null); })} sx={{ color: 'error.main' }}>
+                    <MenuItem onClick={(e: MouseEvent) => stopAnd(e, () => { onDelete?.(list.id); close(); })} sx={{ color: 'error.main' }}>
                         <ListItemIcon><Delete fontSize="small" /></ListItemIcon>
                         <ListItemText primary="Poista" sx={{ color: 'inherit' }} />
                     </MenuItem>
