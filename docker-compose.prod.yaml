@@ -15,6 +15,11 @@ services:
     networks:
       - default
       - dokploy-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 
   client:
     build:
@@ -29,6 +34,11 @@ services:
       - api
     environment:
       API_URL: http://api:9000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
 
 networks:
   dokploy-network:
