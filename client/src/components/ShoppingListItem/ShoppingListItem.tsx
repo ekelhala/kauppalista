@@ -1,5 +1,5 @@
 import type { List } from '../../types/List';
-import { List as MuiList, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Chip, useTheme } from '@mui/material';
+import { List as MuiList, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Chip } from '@mui/material';
 import { PinEnd } from '@mui/icons-material';
 import { ListItemMenu } from './ListItemMenu';
 
@@ -19,8 +19,6 @@ export const ShoppingListItem = ({ list,
                                     onDelete,
                                     onPinToggle,
                                     isPinned = false }: Props) => {
-  const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
   const initial = (list.name || '?').charAt(0).toUpperCase();
 
   return (
@@ -34,10 +32,10 @@ export const ShoppingListItem = ({ list,
           cursor: onClick ? 'pointer' : 'default',
           borderRadius: 2,
           border: '1px solid',
-          borderColor: isDark ? 'divider' : 'primary.light',
-          backgroundColor: isDark ? 'background.paper' : 'background.default',
+          borderColor: 'divider',
+          backgroundColor: 'background.paper',
           '&:hover': {
-            backgroundColor: isDark ? 'action.hover' : 'action.selected',
+            backgroundColor: 'action.hover',
           },
         }}
         secondaryAction={

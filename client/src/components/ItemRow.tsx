@@ -1,5 +1,6 @@
 import type { Item } from '../types/Item';
 import { Checkbox, Typography, Card, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { Delete as TrashIcon, Add as PlusIcon, Remove as MinusIcon, MoreVert } from '@mui/icons-material';
 import { useState } from 'react';
 import { decreaseItemQuantity, increaseItemQuantity } from '../services/itemService';
@@ -20,8 +21,8 @@ export const ItemRow = ({ item, onCheck, onDelete }: Props) => {
   const inc = () => { setQuantity(q => q + 1); increaseItemQuantity(item.id); }
 
   const isDark = theme.palette.mode === 'dark';
-  const baseColor = isDark ? theme.palette.grey[700] : 'var(--mui-palette-primary-light, #e3f2fd)';
-  const checkedColor = isDark ? theme.palette.grey[600] : 'var(--mui-palette-primary-main, #1976d2)';
+  const baseColor = isDark ? theme.palette.grey[700] : alpha(theme.palette.primary.main, 0.08);
+  const checkedColor = isDark ? theme.palette.grey[600] : theme.palette.primary.main;
 
   const cardSx = {
     width: '100%',
