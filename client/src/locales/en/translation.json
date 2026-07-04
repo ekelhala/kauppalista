@@ -1,1 +1,92 @@
-{}
+{
+  "auth": {
+    "appName": "Shopping List",
+    "login": "Sign in"
+  },
+  "lists": {
+    "title": "Lists",
+    "actions": {
+      "new": "New"
+    },
+    "tabs": {
+      "pinned": "Pinned",
+      "my": "My Lists",
+      "shared": "Shared with Me"
+    },
+    "empty": {
+      "pinned": "No pinned lists",
+      "my": "No lists",
+      "shared": "No shared lists"
+    },
+    "badge": {
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} items"
+    },
+    "menu": {
+      "share": "Share",
+      "pin": "Pin",
+      "unpin": "Unpin",
+      "delete": "Delete"
+    },
+    "navTitle": "Views"
+  },
+  "items": {
+    "actions": {
+      "back": "Back",
+      "addItem": "Add item"
+    },
+    "menu": {
+      "increase": "Add",
+      "decrease": "Remove",
+      "delete": "Delete",
+      "clearSelected": "Clear selected"
+    },
+    "notFound": "404: list not found",
+    "aria": {
+      "openMenu": "Open menu",
+      "addItem": "Add item"
+    }
+  },
+  "account": {
+    "unknown": "Unknown user",
+    "section": {
+      "settings": "Settings",
+      "userActions": "User Actions"
+    },
+    "theme": {
+      "light": "Light mode",
+      "dark": "Dark mode"
+    },
+    "logout": "Sign out",
+    "aria": {
+      "openMenu": "Open account menu",
+      "copyUsername": "Copy username"
+    }
+  },
+  "dialogs": {
+    "createList": {
+      "title": "Create new list",
+      "namePlaceholder": "List name"
+    },
+    "addItem": {
+      "title": "Add item",
+      "namePlaceholder": "Item name"
+    },
+    "shareList": {
+      "title": "Share list",
+      "searchPrompt": "Search for a user by username",
+      "searchPlaceholder": "Search for a user",
+      "noResults": "No results",
+      "select": "Select",
+      "selected": "Selected"
+    }
+  },
+  "common": {
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "add": "Add",
+      "share": "Share"
+    }
+  }
+}
