@@ -11,7 +11,7 @@ import { useColorMode } from './ColorModeProvider';
 
 const App = () => {
   const { mode, toggle } = useColorMode();
-  const [activeTab, setActiveTab] = useState<string>('pinned');
+  const [activeView, setActiveView] = useState<'pinned' | 'my' | 'shared'>('pinned');
 
   const auth = useAuth();
   // Track if we've already attempted a one-time silent signin during this
@@ -52,8 +52,8 @@ const App = () => {
               element={<ListsView 
                           mode={mode} 
                           toggle={toggle} 
-                          activeTab={activeTab} 
-                          setActiveTab={setActiveTab} />} />
+                          activeView={activeView} 
+                          setActiveView={setActiveView} />} />
             <Route path="/lists/:id" element={<ListViewWrapper />} />
             {/* Route used only for silent renew iframe callback */}
             <Route path="/silent-renew" element={<SilentRenew />} />

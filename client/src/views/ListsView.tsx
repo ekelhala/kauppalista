@@ -1,24 +1,26 @@
 import { useEffect, useState } from "react";
 import type { List } from "../types/List";
 import { deleteList, getLists, getSharedWithMeLists, getPinnedLists, pinList, unpinList } from "../services/listService";
-import { Container, Typography, Box, Button, Tabs, Tab, CircularProgress } from '@mui/material';
+import { Container, Typography, Box, Button, CircularProgress, Drawer, List as MuiList, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, AppBar, Toolbar, IconButton } from '@mui/material';
 import { AddListDialog } from "../dialogs/AddListDialog";
 import { ShareListDialog } from "../dialogs/ShareListDialog";
 import ShoppingLists from '../components/ShoppingLists';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Add } from '@mui/icons-material';
+import { Add, Menu as MenuIcon, PushPin, List as ListIcon, Share } from '@mui/icons-material';
 import { AccountMenu } from '../components/AccountMenu';
 import { useAuth } from "react-oidc-context";
 import type { Theme } from "../types/Theme";
 
+type ViewType = 'pinned' | 'my' | 'shared';
+
 export interface ListsViewParams {
     toggle: () => void;
     mode: Theme;
-    activeTab: string;
-    setActiveTab: (tab: string) => void;
+    activeView: ViewType;
+    setActiveView: (view: ViewType) => void;
 }
 
-export const ListsView = ({ toggle, mode, activeTab, setActiveTab }: ListsViewParams) => {
+export const ListsView = ({ toggle, mode, activeView, setActiveView }: ListsViewParams) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [lists, setLists] = useState<List[]>([]);
@@ -28,6 +30,7 @@ export const ListsView = ({ toggle, mode, activeTab, setActiveTab }: ListsViewPa
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [shareListId, setShareListId] = useState<string | null>(null);
   const [sharedWithMeLists, setSharedWithMeLists] = useState<List[]>([]);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const auth = useAuth();
 
   const getAndSetLists = async () => {
@@ -48,6 +51,22 @@ export const ListsView = ({ toggle, mode, activeTab, setActiveTab }: ListsViewPa
     toggle();
   }
 
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleViewChange = (view: ViewType) => {
+    setActiveView(view);
+    const params = new URLSearchParams(searchParams);
+    params.set('tab', view);
+    setSearchParams(params, { replace: true });
+    handleMenuClose();
+  };
+
   useEffect(() => {
     if (!auth.isLoading && auth.isAuthenticated) {
       getAndSetLists();
@@ -57,104 +76,137 @@ export const ListsView = ({ toggle, mode, activeTab, setActiveTab }: ListsViewPa
   useEffect(() => {
     const requestedTab = searchParams.get('tab');
     if (requestedTab === 'pinned' || requestedTab === 'my' || requestedTab === 'shared') {
-      setActiveTab(requestedTab);
+      setActiveView(requestedTab as ViewType);
     }
-  }, [searchParams, setActiveTab]);
+  }, [searchParams, setActiveView]);
+
+  const navItems: { value: ViewType; label: string; icon: React.ReactNode; count: number }[] = [
+    { value: 'pinned', label: 'Kiinnitetyt', icon: <PushPin />, count: pinnedLists.length },
+    { value: 'my', label: 'Omat', icon: <ListIcon />, count: lists.length },
+    { value: 'shared', label: 'Jaettu kanssani', icon: <Share />, count: sharedWithMeLists.length },
+  ];
 
   return (
-    <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4">Listat</Typography>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <Button variant="contained" onClick={() => setDialogOpen(true)} startIcon={<Add />}>Uusi</Button>
-          <AccountMenu onThemeToggle={handleThemeToggle} mode={mode} />
-        </Box>
-      </Box>
-
-      <AddListDialog opened={dialogOpen} onClose={() => setDialogOpen(false)} onListCreated={getAndSetLists} />
-      <ShareListDialog opened={shareDialogOpen} onClose={() => { setShareDialogOpen(false); setShareListId(null); }} listId={shareListId} onShared={getAndSetLists} />
-
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 50 }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Tabs variant="standard" value={activeTab} onChange={(_, value) => {
-          const nextTab = value ? value : 'pinned';
-          setActiveTab(nextTab);
-          const params = new URLSearchParams(searchParams);
-          params.set('tab', nextTab);
-          setSearchParams(params, { replace: true });
-        }}>
-          <Box sx={{ display: 'flex', flexWrap: 'nowrap', overflowX: 'auto', gap: 1, whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch' }}>
-            <Tab value="pinned" label={<span>Kiinnitetyt (<Typography component="span" color="primary">{pinnedLists.length}</Typography>)</span>} />
-            <Tab value="my" label={<span>Omat (<Typography component="span" color="primary">{lists.length}</Typography>)</span>} />
-            <Tab value="shared" label={<span>Jaettu kanssani (<Typography component="span" color="primary">{sharedWithMeLists.length}</Typography>)</span>} />
+    <>
+      <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton size="small" onClick={handleMenuOpen} aria-label="Avaa navigaatio">
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h5" component="h1">Listat</Typography>
           </Box>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Button variant="contained" onClick={() => setDialogOpen(true)} startIcon={<Add />}>Uusi</Button>
+            <AccountMenu onThemeToggle={handleThemeToggle} mode={mode} />
+          </Box>
+        </Toolbar>
+      </AppBar>
 
-          {activeTab === 'pinned' && (
-            <Box sx={{ py: 2 }}>
-              {pinnedLists.length === 0 ? (
-                <Typography color="text.secondary">Ei kiinnitettyjä listoja</Typography>
-              ) : (
-                <ShoppingLists
-                  lists={pinnedLists}
-                  onListSelect={(id: string) => navigate(`/lists/${id}`, { state: { name: pinnedLists.find(l => l.id === id)?.name } })}
-                  onListShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
-                  onListDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
-                  isListPinned={() => true}
-                  onListTogglePinned={async (id: string) => { await unpinList(id); await getAndSetLists(); }}
-                  isListOwner={() => true}
-                />
-              )}
-            </Box>
-          )}
+      <Drawer
+        anchor="left"
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        sx={{
+          '& .MuiDrawer-paper': { width: 260, boxSizing: 'border-box' },
+        }}
+      >
+        <Box sx={{ p: 2 }}>
+          <Typography variant="h6" component="div">Näkymät</Typography>
+        </Box>
+        <Divider />
+        <MuiList sx={{ px: 1 }}>
+          {navItems.map(item => (
+            <ListItem key={item.value} disablePadding>
+              <ListItemButton
+                selected={activeView === item.value}
+                onClick={() => handleViewChange(item.value)}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.label} />
+                <Typography variant="caption" color="primary" sx={{ ml: 1 }}>
+                  {item.count}
+                </Typography>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </MuiList>
+      </Drawer>
 
-          {activeTab === 'my' && (
-            <Box sx={{ py: 2 }}>
-              {lists.length === 0 ? (
-                <Typography color="text.secondary">Ei listoja</Typography>
-              ) : (
-                <ShoppingLists
-                  lists={lists}
-                  onListSelect={(id: string) => navigate(`/lists/${id}`, { state: { name: lists.find(l => l.id === id)?.name } })}
-                  onListShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
-                  onListDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
-                  isListPinned={(id: string) => pinnedLists.some(p => p.id === id)}
-                  onListTogglePinned={async (id: string) => {
-                    const isPinned = pinnedLists.some(p => p.id === id);
-                    if (isPinned) await unpinList(id); else await pinList(id);
-                    await getAndSetLists();
-                  }}
-                  isListOwner={() => true}
-                />
-              )}
-            </Box>
-          )}
+      <Container maxWidth="sm" sx={{ py: 4 }}>
+        <AddListDialog opened={dialogOpen} onClose={() => setDialogOpen(false)} onListCreated={getAndSetLists} />
+        <ShareListDialog opened={shareDialogOpen} onClose={() => { setShareDialogOpen(false); setShareListId(null); }} listId={shareListId} onShared={getAndSetLists} />
 
-          {activeTab === 'shared' && (
-            <Box sx={{ py: 2 }}>
-              {sharedWithMeLists.length === 0 ? (
-                <Typography color="text.secondary">Ei jaettuja listoja</Typography>
-              ) : (
-                <ShoppingLists
-                  lists={sharedWithMeLists}
-                  onListSelect={(id: string) => navigate(`/lists/${id}`, { state: { name: sharedWithMeLists.find(l => l.id === id)?.name } })}
-                  onListShare={() => undefined}
-                  onListDelete={() => undefined}
-                  isListPinned={(id: string) => pinnedLists.some(p => p.id === id)}
-                  onListTogglePinned={async (id: string) => {
-                    const isPinned = pinnedLists.some(p => p.id === id);
-                    if (isPinned) await unpinList(id); else await pinList(id);
-                    await getAndSetLists();
-                  }}
-                  isListOwner={() => false}
-                />
-              )}
-            </Box>
-          )}
-        </Tabs>
-      )}
-    </Container>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 50 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            {activeView === 'pinned' && (
+              <Box sx={{ py: 2 }}>
+                {pinnedLists.length === 0 ? (
+                  <Typography color="text.secondary">Ei kiinnitettyjä listoja</Typography>
+                ) : (
+                  <ShoppingLists
+                    lists={pinnedLists}
+                    onListSelect={(id: string) => navigate(`/lists/${id}`, { state: { name: pinnedLists.find(l => l.id === id)?.name } })}
+                    onListShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
+                    onListDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
+                    isListPinned={() => true}
+                    onListTogglePinned={async (id: string) => { await unpinList(id); await getAndSetLists(); }}
+                    isListOwner={() => true}
+                  />
+                )}
+              </Box>
+            )}
+
+            {activeView === 'my' && (
+              <Box sx={{ py: 2 }}>
+                {lists.length === 0 ? (
+                  <Typography color="text.secondary">Ei listoja</Typography>
+                ) : (
+                  <ShoppingLists
+                    lists={lists}
+                    onListSelect={(id: string) => navigate(`/lists/${id}`, { state: { name: lists.find(l => l.id === id)?.name } })}
+                    onListShare={(id: string) => { setShareListId(id); setShareDialogOpen(true); }}
+                    onListDelete={async (id: string) => { await deleteList(id); await getAndSetLists(); }}
+                    isListPinned={(id: string) => pinnedLists.some(p => p.id === id)}
+                    onListTogglePinned={async (id: string) => {
+                      const isPinned = pinnedLists.some(p => p.id === id);
+                      if (isPinned) await unpinList(id); else await pinList(id);
+                      await getAndSetLists();
+                    }}
+                    isListOwner={() => true}
+                  />
+                )}
+              </Box>
+            )}
+
+            {activeView === 'shared' && (
+              <Box sx={{ py: 2 }}>
+                {sharedWithMeLists.length === 0 ? (
+                  <Typography color="text.secondary">Ei jaettuja listoja</Typography>
+                ) : (
+                  <ShoppingLists
+                    lists={sharedWithMeLists}
+                    onListSelect={(id: string) => navigate(`/lists/${id}`, { state: { name: sharedWithMeLists.find(l => l.id === id)?.name } })}
+                    onListShare={() => undefined}
+                    onListDelete={() => undefined}
+                    isListPinned={(id: string) => pinnedLists.some(p => p.id === id)}
+                    onListTogglePinned={async (id: string) => {
+                      const isPinned = pinnedLists.some(p => p.id === id);
+                      if (isPinned) await unpinList(id); else await pinList(id);
+                      await getAndSetLists();
+                    }}
+                    isListOwner={() => false}
+                  />
+                )}
+              </Box>
+            )}
+          </>
+        )}
+      </Container>
+    </>
   )
 }
