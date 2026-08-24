@@ -6,7 +6,7 @@ require (
 	github.com/coreos/go-oidc v2.5.0+incompatible
 	github.com/go-chi/chi/v5 v5.3.2
 	github.com/joho/godotenv v1.5.1
-	github.com/redis/go-redis/v9 v9.21.0
+	github.com/redis/go-redis/v9 v9.22.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/gorm v1.31.2
 )
@@ -25,6 +25,7 @@ require (
 	golang.org/x/crypto v0.52.0 // indirect
 	golang.org/x/oauth2 v0.31.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
 	gopkg.in/go-jose/go-jose.v2 v2.6.3 // indirect
 )
 
